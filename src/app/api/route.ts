@@ -1,9 +1,18 @@
-// app/api/data/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, Subjects } from "@prisma/client";
+import { Ratelimit } from "@upstash/ratelimit";
+import { kv } from "@vercel/kv";
 
 const prisma = new PrismaClient();
+
+const ratelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.slidingWindow(5, "10s"),
+});
+
+export const config = {
+  runtime: "edge",
+};
 
 // *** this will change and will be fetched from a separate arr of json file ***
 interface Data {
@@ -24,7 +33,17 @@ const validSubjects = [
 // *** this will change and will be fetched from a separate arr of json file ***
 const validTypes = ["YOUTUBE", "DRIVE", "TELEGRAM", "OTHER"];
 
+const limitFunc = async (ip: string) => {
+  const { limit, reset, remaining } = await ratelimit.limit(ip);
+  if (remaining === 0) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
+};
+
 export async function GET(request: NextRequest) {
+  const ip = request.ip || "127.0.0.1";
+  await limitFunc(ip);
+
   const searchParams = request.nextUrl.searchParams;
   const subject = searchParams.get("subject");
 
@@ -57,6 +76,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = request.ip || "127.0.0.1";
+  await limitFunc(ip);
+
   try {
     const body: Data = await request.json();
     const { subject, link, type } = body;
