@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model data {
+  id        Int      @id @default(autoincrement())
+  subject   Subjects
+  link      String
+  type      Types
+}
+
+enum Types {
+  YOUTUBE
+  DRIVE
+  TELEGRAM
+  OTHER
+}
+
+enum Subjects {
+  CALC_1
+  CALC_2
+  PHYSICS_1
+  PHYSICS_2
+  INTRO_TO_CS
+  // more subjects here
+} 
