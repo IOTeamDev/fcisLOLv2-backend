@@ -1,4 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+// app/api/data/route.ts
+
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, Subjects } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -11,14 +13,30 @@ interface Data {
   type: "YOUTUBE" | "DRIVE" | "TELEGRAM" | "OTHER";
 }
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+// *** this will change and will be fetched from a separate arr of json file ***
+const validSubjects = [
+  "CALC_1",
+  "CALC_2",
+  "PHYSICS_1",
+  "PHYSICS_2",
+  "INTRO_TO_CS",
+];
+// *** this will change and will be fetched from a separate arr of json file ***
+const validTypes = ["YOUTUBE", "DRIVE", "TELEGRAM", "OTHER"];
+
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const subject = searchParams.get("subject");
+
+  if (!subject) {
+    return NextResponse.json({ error: "Subject is required" }, { status: 400 });
+  }
+
+  if (!validSubjects.includes(subject as Subjects)) {
+    return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
+  }
+
   try {
-    const { subject } = req.query;
-
-    if (!subject) {
-      return res.status(400).json({ error: "Subject is required" });
-    }
-
     const data = await prisma.data.findMany({
       where: {
         subject: subject as Subjects,
@@ -29,37 +47,30 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    return res.status(200).json(data);
+    return NextResponse.json(data);
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(request: NextRequest) {
   try {
-    const { subject, link, type }: Data = req.body;
-
-    // *** this will change and will be fetched from a separate arr of json file ***
-    const validSubjects = [
-      "CALC_1",
-      "CALC_2",
-      "PHYSICS_1",
-      "PHYSICS_2",
-      "INTRO_TO_CS",
-    ];
-    // *** this will change and will be fetched from a separate arr of json file ***
-    const validTypes = ["YOUTUBE", "DRIVE", "TELEGRAM", "OTHER"];
+    const body: Data = await request.json();
+    const { subject, link, type } = body;
 
     if (!validSubjects.includes(subject)) {
-      return res.status(400).json({ error: "Invalid subject" });
+      return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
     }
 
     if (!validTypes.includes(type)) {
-      return res.status(400).json({ error: "Invalid type" });
+      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
 
     if (!link) {
-      return res.status(400).json({ error: "Link is required" });
+      return NextResponse.json({ error: "Link is required" }, { status: 400 });
     }
 
     const newData = await prisma.data.create({
@@ -70,8 +81,11 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    return res.status(201).json(newData);
+    return NextResponse.json(newData, { status: 201 });
   } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
