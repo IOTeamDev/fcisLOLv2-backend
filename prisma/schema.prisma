@@ -12,10 +12,18 @@ model User {
   name      String
   email     String   @unique
   password  String
-  data      Data[]
+  material  Material[]
+  level     Level
 }
 
-model Data {
+enum Level {
+  One
+  Two
+  Three
+  Four
+}
+
+model Material {
   id        Int      @id @default(autoincrement())
   subject   Subjects
   link      String

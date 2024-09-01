@@ -11,6 +11,7 @@ interface Data {
   subject: "CALC_1" | "CALC_2" | "PHYSICS_1" | "PHYSICS_2" | "INTRO_TO_CS";
   link: string;
   type: "YOUTUBE" | "DRIVE" | "TELEGRAM" | "OTHER";
+  autorId: number;
 }
 
 // *** this will change and will be fetched from a separate arr of json file ***
@@ -23,6 +24,7 @@ const validSubjects = [
 ];
 // *** this will change and will be fetched from a separate arr of json file ***
 const validTypes = ["YOUTUBE", "DRIVE", "TELEGRAM", "OTHER"];
+
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -37,7 +39,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const data = await prisma.data.findMany({
+    const data = await prisma.material.findMany({
       where: {
         subject: subject as Subjects,
       },
@@ -56,10 +58,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
+
 export async function POST(request: NextRequest) {
   try {
     const body: Data = await request.json();
-    const { subject, link, type } = body;
+    const { subject, link, type, autorId } = body;
 
     if (!validSubjects.includes(subject)) {
       return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
@@ -73,11 +76,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Link is required" }, { status: 400 });
     }
 
-    const newData = await prisma.data.create({
+    if (!autorId) {
+      return NextResponse.json({ error: "Author is required" }, { status: 400 });
+    }
+
+    const newData = await prisma.material.create({
       data: {
         subject,
         link,
         type,
+        author: {
+          connect: {
+            id: autorId,
+          },
+        },
       },
     });
 
