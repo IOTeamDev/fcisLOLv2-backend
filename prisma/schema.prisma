@@ -50,7 +50,6 @@ enum Subjects {
 
 model Leaderboard {
   id        Int      @id @default(autoincrement())
-  userId    Int
   name      String
   points    Int
 }

@@ -83,7 +83,6 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
     // Add the new user to the leaderboard with 0 points
     await prisma.leaderboard.create({
       data: {
-        userId: newUser.id,
         name: newUser.name,
         points: 0,
       },
@@ -128,17 +127,17 @@ export async function PUT(req: NextApiRequest, res: NextApiResponse) {
 }
 
 // Delete a user
-export async function DELETE(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+// export async function DELETE(req: NextApiRequest, res: NextApiResponse) {
+//   const { id } = req.query;
 
-  try {
-    await prisma.user.delete({
-      where: { id: Number(id) },
-    });
+//   try {
+//     await prisma.user.delete({
+//       where: { id: Number(id) },
+//     });
 
-    return res.status(200).json({ message: 'User deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-}
+//     return res.status(200).json({ message: 'User deleted successfully' });
+//   } catch (error) {
+//     console.error('Error deleting user:', error);
+//     return res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// }

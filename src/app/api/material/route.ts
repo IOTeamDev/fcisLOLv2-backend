@@ -11,7 +11,7 @@ interface Data {
   subject: "CALC_1" | "CALC_2" | "PHYSICS_1" | "PHYSICS_2" | "INTRO_TO_CS";
   link: string;
   type: "YOUTUBE" | "DRIVE" | "TELEGRAM" | "OTHER";
-  autorId: number;
+  authorId: number;
 }
 
 // *** this will change and will be fetched from a separate arr of json file ***
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body: Data = await request.json();
-    const { subject, link, type, autorId } = body;
+    const { subject, link, type, authorId } = body;
 
     if (!validSubjects.includes(subject)) {
       return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Link is required" }, { status: 400 });
     }
 
-    if (!autorId) {
+    if (!authorId) {
       return NextResponse.json({ error: "Author is required" }, { status: 400 });
     }
 
@@ -87,8 +87,17 @@ export async function POST(request: NextRequest) {
         type,
         author: {
           connect: {
-            id: autorId,
+            id: authorId,
           },
+        },
+      },
+    });
+
+    await prisma.leaderboard.update({
+      where: { id: authorId },
+      data: {
+        points: {
+          increment: 1,
         },
       },
     });
