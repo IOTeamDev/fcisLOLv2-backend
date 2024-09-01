@@ -4,7 +4,7 @@ import { TextEncoder } from 'util';
 
 const prisma = new PrismaClient();
 
-export async function verifyToken(token: string, select: Partial<Record<keyof User, boolean>>) {
+export async function verifyToken(token: any, select: Partial<Record<keyof User, boolean>>) {
   try {
     // Decode and verify the JWT token
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);

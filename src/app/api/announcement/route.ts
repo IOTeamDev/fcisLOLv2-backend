@@ -69,6 +69,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
         content: data.content,
         thumbnail: data.thumbnail,
         type: data.type,
+        level: data.level,
       },
     });
 
