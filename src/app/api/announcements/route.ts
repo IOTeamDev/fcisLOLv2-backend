@@ -1,71 +1,63 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient, AnnouncementType } from '@prisma/client';
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
-import { verifyToken } from '@/utils/verifyToken';
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient, AnnouncementType } from "@prisma/client";
+import { cookies } from "next/headers";
+import { verifyToken } from "@/utils/verifyToken";
 
 const prisma = new PrismaClient();
 
-// Utility function to validate request body data for announcement creation and update
 function validateAnnouncementData(data: any) {
-  if (!data.title || typeof data.title !== 'string') {
-    return { valid: false, message: 'Invalid or missing title' };
+  if (!data.title || typeof data.title !== "string") {
+    return { valid: false, message: "Invalid or missing title" };
   }
 
-  if (!data.content || typeof data.content !== 'string') {
-    return { valid: false, message: 'Invalid or missing content' };
+  if (!data.content || typeof data.content !== "string") {
+    return { valid: false, message: "Invalid or missing content" };
   }
 
-  if (data.thumbnail && typeof data.thumbnail !== 'string') {
-    return { valid: false, message: 'Invalid thumbnail' };
+  if (data.thumbnail && typeof data.thumbnail !== "string") {
+    return { valid: false, message: "Invalid thumbnail" };
   }
 
   if (!data.type || !Object.values(AnnouncementType).includes(data.type)) {
-    return { valid: false, message: 'Invalid or missing type' };
+    return { valid: false, message: "Invalid or missing type" };
   }
 
-  return { valid: true, message: '' };
+  return { valid: true, message: "" };
 }
 
-// Fetch all announcements or a specific announcement by ID
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+export async function GET(request: NextRequest) {
+  const id = request.nextUrl.searchParams.get("id");
 
   try {
     if (id) {
-      // Fetch a specific announcement by ID
       const announcement = await prisma.announcement.findUnique({
         where: { id: Number(id) },
       });
 
       if (!announcement) {
-        return res.status(404).json({ error: 'Announcement not found' });
+        return NextResponse.json({ error: "Announcement not found" }, { status: 404 });
       }
 
-      return res.status(200).json(announcement);
+      return NextResponse.json(announcement);
     } else {
-      // Fetch all announcements
       const announcements = await prisma.announcement.findMany();
-      return res.status(200).json(announcements);
+      return NextResponse.json(announcements);
     }
   } catch (error) {
-    console.error('Error fetching announcements:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching announcements:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-// Create a new announcement
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(request: NextRequest) {
   try {
-    const data = req.body;
+    const data = await request.json();
 
-    // Validate announcement data
     const { valid, message } = validateAnnouncementData(data);
     if (!valid) {
-      return res.status(400).json({ error: message });
+      return NextResponse.json({ error: message }, { status: 400 });
     }
 
-    // Create a new announcement
     const newAnnouncement = await prisma.announcement.create({
       data: {
         title: data.title,
@@ -76,27 +68,25 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    return res.status(201).json(newAnnouncement);
+    return NextResponse.json(newAnnouncement, { status: 201 });
   } catch (error) {
-    console.error('Error creating announcement:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error creating announcement:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-// Update an existing announcement
-export async function PUT(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+export async function PUT(request: NextRequest) {
+  const id = request.nextUrl.searchParams.get("id");
 
   try {
-    const data = req.body;
+    const data = await request.json();
 
-    // Validate announcement data
     const { valid, message } = validateAnnouncementData(data);
     if (!valid) {
-      return res.status(400).json({ error: message });
+      return NextResponse.json({ error: message }, { status: 400 });
     }
 
-    const cookieStore = cookies()
+    const cookieStore = cookies();
     if (!cookieStore.has("token")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -104,11 +94,10 @@ export async function PUT(req: NextApiRequest, res: NextApiResponse) {
     const token = cookieStore.get("token");
     const userDataFromToken = await verifyToken(token, { role: true });
 
-    if (userDataFromToken.role !== 'ADMIN') {
-      return res.status(403).json({ error: 'Unauthorized' });
+    if (userDataFromToken.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
-    
-    // Update announcement data
+
     const updatedAnnouncement = await prisma.announcement.update({
       where: { id: Number(id) },
       data: {
@@ -119,9 +108,9 @@ export async function PUT(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    return res.status(200).json(updatedAnnouncement);
+    return NextResponse.json(updatedAnnouncement);
   } catch (error) {
-    console.error('Error updating announcement:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error updating announcement:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

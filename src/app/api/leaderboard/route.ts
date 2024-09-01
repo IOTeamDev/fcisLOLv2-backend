@@ -1,20 +1,18 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// GET request to fetch leaderboard in ascending order of points
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(request: NextRequest) {
   try {
     const leaderboard = await prisma.leaderboard.findMany({
       orderBy: {
-        points: 'asc',
+        points: "asc",
       },
     });
-    return res.status(200).json(leaderboard);
+    return NextResponse.json(leaderboard);
   } catch (error) {
-    console.error('Error fetching leaderboard:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching leaderboard:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
- 
