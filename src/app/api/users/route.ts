@@ -70,6 +70,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: message });
     }
 
+
     // Create a new user
     const newUser = await prisma.user.create({
       data: {
@@ -77,6 +78,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
         email: data.email,
         password: data.password,  // Make sure to hash this in a real application!
         level: data.level,
+        role: 'STUDENT',
       },
     });
 
