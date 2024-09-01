@@ -87,6 +87,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
       data: {
         name: newUser.name,
         points: 0,
+        level: newUser.level,
       },
     })
 

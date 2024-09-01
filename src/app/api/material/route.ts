@@ -133,7 +133,6 @@ export async function DELETE(request: NextRequest) {
       where: { id: materialId },
     });
   }
-
     return NextResponse.json({ message: "Material deleted" });
   } catch (error) {
     return NextResponse.json(
