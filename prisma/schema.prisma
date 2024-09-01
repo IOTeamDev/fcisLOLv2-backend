@@ -7,14 +7,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model data {
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  data      Data[]
+}
+
+model Data {
   id        Int      @id @default(autoincrement())
   subject   Subjects
   link      String
-  type      Types
+  type      DataType
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
 }
 
-enum Types {
+enum DataType {
   YOUTUBE
   DRIVE
   TELEGRAM
@@ -28,4 +38,25 @@ enum Subjects {
   PHYSICS_2
   INTRO_TO_CS
   // more subjects here
-} 
+}
+
+model Leaderboard {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  name      String
+  points    Int
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  thumbnail String?
+  type      AnnouncementType
+}
+
+enum AnnouncementType {
+  Assignment
+  Quiz
+  Other
+}
