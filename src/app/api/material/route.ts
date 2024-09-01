@@ -1,30 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, Subjects } from "@prisma/client";
+import { PrismaClient, Subjects, MaterialType } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// removed rate limit
-
-// *** this will change and will be fetched from a separate arr of json file ***
 interface Data {
   id?: number;
-  subject: "CALC_1" | "CALC_2" | "PHYSICS_1" | "PHYSICS_2" | "INTRO_TO_CS";
+  subject: Subjects;
   link: string;
-  type: "YOUTUBE" | "DRIVE" | "TELEGRAM" | "OTHER";
+  type: MaterialType;
   authorId: number;
 }
 
-// *** this will change and will be fetched from a separate arr of json file ***
-const validSubjects = [
-  "CALC_1",
-  "CALC_2",
-  "PHYSICS_1",
-  "PHYSICS_2",
-  "INTRO_TO_CS",
-];
-// *** this will change and will be fetched from a separate arr of json file ***
-const validTypes = ["YOUTUBE", "DRIVE", "TELEGRAM", "OTHER"];
-
+const validSubjects = Object.values(Subjects);
+const validTypes = Object.values(MaterialType);
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -57,7 +45,6 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-
 
 export async function POST(request: NextRequest) {
   try {
