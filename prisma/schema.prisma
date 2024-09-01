@@ -27,12 +27,12 @@ model Material {
   id        Int      @id @default(autoincrement())
   subject   Subjects
   link      String
-  type      DataType
+  type      MaterialType
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
 }
 
-enum DataType {
+enum MaterialType {
   YOUTUBE
   DRIVE
   TELEGRAM
