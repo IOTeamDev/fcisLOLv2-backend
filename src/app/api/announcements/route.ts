@@ -1,5 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient, AnnouncementType } from '@prisma/client';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
+import { verifyToken } from '@/utils/verifyToken';
 
 const prisma = new PrismaClient();
 
@@ -93,6 +96,18 @@ export async function PUT(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: message });
     }
 
+    const cookieStore = cookies()
+    if (!cookieStore.has("token")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = cookieStore.get("token");
+    const userDataFromToken = await verifyToken(token, { role: true });
+
+    if (userDataFromToken.role !== 'ADMIN') {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
     // Update announcement data
     const updatedAnnouncement = await prisma.announcement.update({
       where: { id: Number(id) },
