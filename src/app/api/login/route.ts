@@ -34,7 +34,8 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
     const token = await new SignJWT({ userId: user.id })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
-      .setExpirationTime(process.env.JWT_EXPIRES_IN || '7d')
+      .setExpirationTime('')
+      .setExpirationTime(Math.floor(Date.now() / 1000) + (12 * 30 * 24 * 60 * 60))
       .sign(secret);
 
     // Respond with the token and basic user information
