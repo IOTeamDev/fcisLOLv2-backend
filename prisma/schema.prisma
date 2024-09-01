@@ -14,6 +14,12 @@ model User {
   password  String
   material  Material[]
   level     Level
+  role      Role
+}
+
+enum Role {
+  STUDENT
+  ADMIN
 }
 
 enum Level {
