@@ -124,16 +124,15 @@ export async function DELETE(request: NextRequest) {
     }
 
     const token = cookieStore.get("token");
-    const userDataFromToken = await verifyToken(token, { id: true });
+    const userDataFromToken = await verifyToken(token, { id: true, role: true });
     if (!userDataFromToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    } else if (userDataFromToken.id !== authorId) { // Check if the user is the author of the material
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    } 
+    if (userDataFromToken.id === authorId || userDataFromToken.role === "ADMIN") {
     await prisma.material.delete({
       where: { id: materialId },
     });
+  }
 
     return NextResponse.json({ message: "Material deleted" });
   } catch (error) {
