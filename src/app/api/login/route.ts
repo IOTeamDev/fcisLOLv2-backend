@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { SignJWT } from "jose";
 import { TextEncoder } from "util"; // Required for encoding the secret
+import { cookies } from "next/headers";
 
 const prisma = new PrismaClient();
 
@@ -9,7 +10,10 @@ export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
 
   if (!email || !password) {
-    return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Email and password are required" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -18,13 +22,19 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 400 }
+      );
     }
 
     const isPasswordValid = password === user.password;
 
     if (!isPasswordValid) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 400 }
+      );
     }
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -34,8 +44,10 @@ export async function POST(request: NextRequest) {
       .setExpirationTime(Math.floor(Date.now() / 1000) + 12 * 30 * 24 * 60 * 60)
       .sign(secret);
 
+    cookies().set("authToken", token);
+
     return NextResponse.json({
-      token,
+      message: "success",
       user: {
         id: user.id,
         name: user.name,
@@ -45,6 +57,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error during user login:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

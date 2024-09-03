@@ -19,7 +19,11 @@ function validateUserData(data: any) {
   }
 
   if (!data.level || !Object.values(Level).includes(data.level)) {
-    return { valid: false, message: "Invalid or missing level. Valid Levels: One, Two, Three or Four" };
+    return {
+      valid: false,
+      message:
+        "Invalid or missing level. Valid Levels: One, Two, Three or Four",
+    };
   }
 
   return { valid: true, message: "" };
