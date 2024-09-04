@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         content: data.content,
         thumbnail: data.thumbnail,
         type: data.type,
-        level: data.level,
+        semester: data.semester,
       },
     });
 

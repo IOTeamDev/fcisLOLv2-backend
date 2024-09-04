@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         id: user.id,
         name: user.name,
         email: user.email,
-        level: user.level,
+        level: user.semester,
       },
     });
   } catch (error) {
