@@ -1,26 +1,17 @@
-/*
-  Warnings:
-
-  - You are about to drop the `data` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('STUDENT', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "Level" AS ENUM ('One', 'Two', 'Three', 'Four');
+CREATE TYPE "Semester" AS ENUM ('One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight');
 
 -- CreateEnum
 CREATE TYPE "MaterialType" AS ENUM ('YOUTUBE', 'DRIVE', 'TELEGRAM', 'OTHER');
 
 -- CreateEnum
+CREATE TYPE "Subjects" AS ENUM ('CALC_1', 'CALC_2', 'PHYSICS_1', 'PHYSICS_2', 'INTRO_TO_CS');
+
+-- CreateEnum
 CREATE TYPE "AnnouncementType" AS ENUM ('Assignment', 'Quiz', 'Other');
-
--- DropTable
-DROP TABLE "data";
-
--- DropEnum
-DROP TYPE "Types";
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -28,7 +19,9 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "level" "Level" NOT NULL,
+    "phone" TEXT,
+    "photo" TEXT,
+    "semester" "Semester" NOT NULL,
     "role" "Role" NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -50,7 +43,7 @@ CREATE TABLE "Leaderboard" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "points" INTEGER NOT NULL,
-    "level" "Level" NOT NULL,
+    "semester" "Semester" NOT NULL,
 
     CONSTRAINT "Leaderboard_pkey" PRIMARY KEY ("id")
 );
@@ -62,7 +55,7 @@ CREATE TABLE "Announcement" (
     "content" TEXT NOT NULL,
     "thumbnail" TEXT,
     "type" "AnnouncementType" NOT NULL,
-    "level" "Level" NOT NULL,
+    "semester" "Semester" NOT NULL,
 
     CONSTRAINT "Announcement_pkey" PRIMARY KEY ("id")
 );

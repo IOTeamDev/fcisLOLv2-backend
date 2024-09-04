@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const { password, ...userWithoutPassword } = newUser;
+    const { password, role, ...userWithoutPassword } = newUser;
     return NextResponse.json(userWithoutPassword, { status: 201 });
   } catch (error) {
     console.error("Error creating user:", error);

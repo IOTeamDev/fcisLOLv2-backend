@@ -51,14 +51,6 @@ export async function POST(request: NextRequest) {
     const body: Data = await request.json();
     const { subject, link, type } = body;
 
-    const authHeader = request.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const token = authHeader.split(" ")[1];
-    const userDataFromToken = await verifyToken(token, { id: true });
-
     if (!validSubjects.includes(subject)) {
       return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
     }
@@ -71,6 +63,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Link is required" }, { status: 400 });
     }
 
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const userDataFromToken = await verifyToken(token, { id: true });
+    const authorId = Number(userDataFromToken.id);
+
+    if (!authorId || authorId !== userDataFromToken.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
+    }
+
     const newData = await prisma.material.create({
       data: {
         subject,
@@ -78,14 +83,14 @@ export async function POST(request: NextRequest) {
         type,
         author: {
           connect: {
-            id: userDataFromToken.id,
+            id: authorId,
           },
         },
       },
     });
 
     await prisma.leaderboard.update({
-      where: { id: userDataFromToken.id },
+      where: { id: authorId },
       data: {
         points: {
           increment: 1,
@@ -130,13 +135,9 @@ export async function DELETE(request: NextRequest) {
     if (!userDataFromToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const material = await prisma.material.findUnique({
-      where: { id: materialId },
-    });
-
+    const authorId = Number(userDataFromToken.id);
     if (
-      userDataFromToken.id === material?.authorId ||
+      userDataFromToken.id === authorId ||
       userDataFromToken.role === "ADMIN"
     ) {
       await prisma.material.delete({

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { SignJWT } from "jose";
-import { TextEncoder } from "util"; // Required for encoding the secret
-import { cookies } from "next/headers";
+import { TextEncoder } from "util";
 
 const prisma = new PrismaClient();
 
@@ -44,15 +43,15 @@ export async function POST(request: NextRequest) {
       .setExpirationTime(Math.floor(Date.now() / 1000) + 12 * 30 * 24 * 60 * 60)
       .sign(secret);
 
-    cookies().set("authToken", token);
-
     return NextResponse.json({
       message: "success",
+      token,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
         level: user.semester,
+        phone: user.phone,
       },
     });
   } catch (error) {

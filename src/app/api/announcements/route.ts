@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, AnnouncementType } from "@prisma/client";
-import { cookies } from "next/headers";
 import { verifyToken } from "@/utils/verifyToken";
 
 const prisma = new PrismaClient();
@@ -22,6 +21,10 @@ function validateAnnouncementData(data: any) {
     return { valid: false, message: "Invalid or missing type" };
   }
 
+  if (!data.semester || typeof data.semester !== "string") {
+    return { valid: false, message: "Invalid or missing semester" };
+  }
+
   return { valid: true, message: "" };
 }
 
@@ -35,7 +38,10 @@ export async function GET(request: NextRequest) {
       });
 
       if (!announcement) {
-        return NextResponse.json({ error: "Announcement not found" }, { status: 404 });
+        return NextResponse.json(
+          { error: "Announcement not found" },
+          { status: 404 }
+        );
       }
 
       return NextResponse.json(announcement);
@@ -45,7 +51,10 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error("Error fetching announcements:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -56,6 +65,18 @@ export async function POST(request: NextRequest) {
     const { valid, message } = validateAnnouncementData(data);
     if (!valid) {
       return NextResponse.json({ error: message }, { status: 400 });
+    }
+
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const userDataFromToken = await verifyToken(token, { role: true });
+
+    if (userDataFromToken.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     const newAnnouncement = await prisma.announcement.create({
@@ -71,7 +92,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(newAnnouncement, { status: 201 });
   } catch (error) {
     console.error("Error creating announcement:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
@@ -86,12 +110,12 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: message }, { status: 400 });
     }
 
-    const cookieStore = cookies();
-    if (!cookieStore.has("token")) {
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const token = cookieStore.get("token");
+    const token = authHeader.split(" ")[1];
     const userDataFromToken = await verifyToken(token, { role: true });
 
     if (userDataFromToken.role !== "ADMIN") {
@@ -111,6 +135,9 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(updatedAnnouncement);
   } catch (error) {
     console.error("Error updating announcement:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
