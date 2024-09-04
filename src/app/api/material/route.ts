@@ -51,18 +51,6 @@ export async function POST(request: NextRequest) {
     const body: Data = await request.json();
     const { subject, link, type } = body;
 
-    if (!validSubjects.includes(subject)) {
-      return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
-    }
-
-    if (!validTypes.includes(type)) {
-      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
-    }
-
-    if (!link) {
-      return NextResponse.json({ error: "Link is required" }, { status: 400 });
-    }
-
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -74,6 +62,18 @@ export async function POST(request: NextRequest) {
 
     if (!authorId || authorId !== userDataFromToken.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
+    }
+
+    if (!validSubjects.includes(subject)) {
+      return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
+    }
+
+    if (!validTypes.includes(type)) {
+      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+    }
+
+    if (!link) {
+      return NextResponse.json({ error: "Link is required" }, { status: 400 });
     }
 
     const newData = await prisma.material.create({
