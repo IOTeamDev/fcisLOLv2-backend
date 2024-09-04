@@ -1,139 +1,345 @@
-# Api Docs
+# API Documentation
 
-### `/api/users`
+## `/api/users`
 
-#### **GET**
-- **Description:** Retrieve all users or a specific user by ID.
-- **Query Parameters:**
-  - `id` (optional): User ID to fetch a specific user.
-- **Responses:**
-  - **200 OK:** Returns a list of users or a single user object.
-  - **404 Not Found:** User not found (if `id` is provided).
-  - **500 Internal Server Error:** On unexpected errors.
+### GET
+**Description:** Retrieve user information. You can either get a specific user by ID or all users.
 
-#### **POST**
-- **Description:** Create a new user.
-- **Request Body:**
-  - `name`: User's name (string, required).
-  - `email`: User's email (string, required).
-  - `password`: User's password (string, required).
-  - `level`: User's level (one of the values from `Level`, required).
-- **Responses:**
-  - **201 Created:** Returns the created user object.
-  - **400 Bad Request:** Validation error.
-  - **500 Internal Server Error:** On unexpected errors.
+**Request Parameters:**
+- **id** (optional): ID of the user to retrieve.
 
-#### **PUT**
-- **Description:** Update an existing user.
-- **Query Parameters:**
-  - `id`: User ID to update.
-- **Request Body:**
-  - `name`: User's name (string, required).
-  - `email`: User's email (string, required).
-  - `password`: User's password (string, required).
-  - `level`: User's level (one of the values from `Level`, required).
-- **Responses:**
-  - **200 OK:** Returns the updated user object.
-  - **400 Bad Request:** Validation error.
-  - **500 Internal Server Error:** On unexpected errors.
+**Response:**
+- **200 OK:** Returns the user data excluding the password.
+- **404 Not Found:** User not found (if an ID is provided).
+- **500 Internal Server Error:** If there is an issue with the server.
 
----
+**Example Request:**
+```http
+GET /api/users?id=1
+```
 
-### `/api/login`
+**Example Response:**
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "1234567890",
+  "photo": "http://example.com/photo.jpg",
+  "semester": "One",
+  "role": "STUDENT",
+  "material": []
+}
+```
 
-#### **POST**
-- **Description:** Authenticate a user and generate a JWT token.
-- **Request Body:**
-  - `email`: User's email (string, required).
-  - `password`: User's password (string, required).
-- **Responses:**
-  - **200 OK:** Returns a JWT token and user information.
-  - **400 Bad Request:** Invalid credentials.
-  - **500 Internal Server Error:** On unexpected errors.
+### POST
+**Description:** Create a new user.
 
----
+**Request Body:**
+- **name**: User's name.
+- **email**: User's email.
+- **password**: User's password.
+- **semester**: User's semester (must be one of the defined enum values).
+- **phone** (optional): User's phone number.
+- **photo** (optional): URL of the user's photo.
 
-### `/api/material`
+**Response:**
+- **201 Created:** Returns the created user data excluding the password.
+- **400 Bad Request:** Validation errors.
+- **500 Internal Server Error:** If there is an issue with the server.
 
-#### **GET**
-- **Description:** Retrieve materials based on subject.
-- **Query Parameters:**
-  - `subject`: Subject to filter materials.
-- **Responses:**
-  - **200 OK:** Returns a list of materials.
-  - **400 Bad Request:** Missing or invalid subject.
-  - **500 Internal Server Error:** On unexpected errors.
+**Example Request:**
+```http
+POST /api/users
+Content-Type: application/json
 
-#### **POST**
-- **Description:** Create a new material.
-- **Request Body:**
-  - `subject`: Subject of the material (one of the values from `Subjects`, required).
-  - `link`: Link to the material (string, required).
-  - `type`: Type of material (one of the values from `MaterialType`, required).
-  - `authorId`: ID of the author (number, required).
-- **Responses:**
-  - **201 Created:** Returns the created material object.
-  - **400 Bad Request:** Validation errors or unauthorized.
-  - **401 Unauthorized:** Token missing or invalid.
-  - **500 Internal Server Error:** On unexpected errors.
+{
+  "name": "Jane Doe",
+  "email": "jane.doe@example.com",
+  "password": "password123",
+  "semester": "Two"
+}
+```
 
-#### **DELETE**
-- **Description:** Delete a material.
-- **Request Body:**
-  - `id`: ID of the material to delete (number, required).
-  - `authorId`: ID of the author (number, required).
-- **Responses:**
-  - **200 OK:** Confirmation message.
-  - **400 Bad Request:** Missing material ID or unauthorized.
-  - **401 Unauthorized:** Token missing or invalid.
-  - **500 Internal Server Error:** On unexpected errors.
+**Example Response:**
+```json
+{
+  "id": 2,
+  "name": "Jane Doe",
+  "email": "jane.doe@example.com",
+  "phone": null,
+  "photo": null,
+  "semester": "Two",
+  "role": "STUDENT",
+  "material": []
+}
+```
 
----
+### PUT
+**Description:** Update an existing user.
 
-### `/api/leaderboard`
+**Request Parameters:**
+- **id**: ID of the user to update.
 
-#### **GET**
-- **Description:** Retrieve the leaderboard sorted by points in ascending order.
-- **Responses:**
-  - **200 OK:** Returns a list of leaderboard entries.
-  - **500 Internal Server Error:** On unexpected errors.
+**Request Body:**
+- **name**: User's name.
+- **email**: User's email.
+- **password**: User's password.
+- **semester**: User's semester (must be one of the defined enum values).
+- **phone** (optional): User's phone number.
+- **photo** (optional): URL of the user's photo.
 
----
+**Response:**
+- **200 OK:** Returns the updated user data excluding the password.
+- **400 Bad Request:** Validation errors.
+- **401 Unauthorized:** If the request is unauthorized.
+- **404 Not Found:** User not found.
+- **500 Internal Server Error:** If there is an issue with the server.
 
-### `/api/announcements`
+**Example Request:**
+```http
+PUT /api/users?id=1
+Content-Type: application/json
 
-#### **GET**
-- **Description:** Retrieve all announcements or a specific announcement by ID.
-- **Query Parameters:**
-  - `id` (optional): Announcement ID to fetch a specific announcement.
-- **Responses:**
-  - **200 OK:** Returns a list of announcements or a single announcement object.
-  - **404 Not Found:** Announcement not found (if `id` is provided).
-  - **500 Internal Server Error:** On unexpected errors.
+{
+  "name": "John Smith",
+  "email": "john.smith@example.com",
+  "password": "newpassword123",
+  "semester": "Three"
+}
+```
 
-#### **POST**
-- **Description:** Create a new announcement.
-- **Request Body:**
-  - `title`: Title of the announcement (string, required).
-  - `content`: Content of the announcement (string, required).
-  - `thumbnail`: Optional thumbnail URL (string).
-  - `type`: Type of the announcement (one of the values from `AnnouncementType`, required).
-  - `level`: Level associated with the announcement.
-- **Responses:**
-  - **201 Created:** Returns the created announcement object.
-  - **400 Bad Request:** Validation error.
-  - **500 Internal Server Error:** On unexpected errors.
+**Example Response:**
+```json
+{
+  "id": 1,
+  "name": "John Smith",
+  "email": "john.smith@example.com",
+  "phone": "1234567890",
+  "photo": "http://example.com/photo.jpg",
+  "semester": "Three",
+  "role": "STUDENT",
+  "material": []
+}
+```
 
-#### **PUT**
-- **Description:** Update an existing announcement.
-- **Query Parameters:**
-  - `id`: Announcement ID to update.
-- **Request Body:**
-  - `title`: Title of the announcement (string, required).
-  - `content`: Content of the announcement (string, required).
-  - `thumbnail`: Optional thumbnail URL (string).
-  - `type`: Type of the announcement (one of the values from `AnnouncementType`, required).
-- **Responses:**
-  - **200 OK:** Returns the updated announcement object.
-  - **400 Bad Request:** Validation error.
-  - **500 Internal Server Error:** On unexpected errors.
+## `/api/me`
+
+### GET
+**Description:** Retrieve the currently authenticated user data.
+
+**Request Headers:**
+- **Authorization**: Bearer token.
+
+**Response:**
+- **200 OK:** Returns the user data excluding the password.
+- **401 Unauthorized:** If the request is unauthorized.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+GET /api/me
+Authorization: Bearer <token>
+```
+
+**Example Response:**
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "phone": "1234567890",
+  "photo": "http://example.com/photo.jpg",
+  "semester": "One",
+  "role": "STUDENT",
+  "material": []
+}
+```
+
+## `/api/material`
+
+### GET
+**Description:** Retrieve material information by subject.
+
+**Request Parameters:**
+- **subject**: Subject to filter materials.
+
+**Response:**
+- **200 OK:** Returns a list of materials.
+- **400 Bad Request:** If the subject is missing or invalid.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+GET /api/material?subject=CALC_1
+```
+
+**Example Response:**
+```json
+[
+  {
+    "link": "http://example.com/material1",
+    "type": "YOUTUBE"
+  }
+]
+```
+
+### POST
+**Description:** Create a new material entry.
+
+**Request Headers:**
+- **Authorization**: Bearer token.
+
+**Request Body:**
+- **subject**: Subject of the material.
+- **link**: Link to the material.
+- **type**: Type of material (must be one of the defined enum values).
+
+**Response:**
+- **201 Created:** Returns the created material.
+- **400 Bad Request:** Validation errors or missing authorization.
+- **401 Unauthorized:** If the request is unauthorized.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+POST /api/material
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "subject": "CALC_1",
+  "link": "http://example.com/newmaterial",
+  "type": "DRIVE"
+}
+```
+
+**Example Response:**
+```json
+{
+  "id": 1,
+  "subject": "CALC_1",
+  "link": "http://example.com/newmaterial",
+  "type": "DRIVE",
+  "authorId": 1
+}
+```
+
+### DELETE
+**Description:** Delete a material entry.
+
+**Request Headers:**
+- **Authorization**: Bearer token.
+
+**Request Body:**
+- **id**: ID of the material to delete.
+
+**Response:**
+- **200 OK:** Confirmation of deletion.
+- **400 Bad Request:** If the ID is missing or invalid.
+- **401 Unauthorized:** If the request is unauthorized.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+DELETE /api/material
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "id": 1
+}
+```
+
+**Example Response:**
+```json
+{
+  "message": "Material deleted"
+}
+```
+
+## `/api/login`
+
+### POST
+**Description:** Authenticate a user and obtain a JWT token.
+
+**Request Body:**
+- **email**: User's email.
+- **password**: User's password.
+
+**Response:**
+- **200 OK:** Returns a JWT token and user data.
+- **400 Bad Request:** If email or password is missing.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+POST /api/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+
+**Example Response:**
+```json
+{
+  "message": "success",
+  "token": "<JWT_TOKEN>",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "level": "One",
+    "phone": "1234567890"
+  }
+}
+```
+## `/api/leaderboard`
+
+#### Description
+
+Fetches the current leaderboard data, which includes a list of participants, their points, and the associated semester.
+
+#### Response
+
+The response will be a JSON array of objects, each representing a participant on the leaderboard. The structure of each object is as follows:
+
+- **id** (integer): A unique identifier for the participant.
+- **name** (string): The name of the participant.
+- **points** (integer): The number of points the participant has accumulated.
+- **semester** (string): The semester in which the participant is competing.
+
+#### Example
+
+**Request:**
+
+```http
+GET /api/leaderboard HTTP/1.1
+```
+
+**Response:**
+
+```json
+[
+    {
+        "id": 1,
+        "name": "q",
+        "points": 1,
+        "semester": "Two"
+    },
+    {
+        "id": 2,
+        "name": "bomba",
+        "points": 4,
+        "semester": "Two"
+    }
+]
+```
+
+#### Notes
+
+- Ensure that the response data is sorted by points in descending order if required.
+- The `semester` field may be used to filter or sort the leaderboard based on the specific semester.
