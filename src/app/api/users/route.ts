@@ -88,6 +88,8 @@ export async function POST(request: NextRequest) {
         email: data.email,
         password: data.password,
         level: data.level,
+        phone: data.phone || null,
+        photo: data.photo || null,
         role: "STUDENT",
       },
     });
@@ -152,6 +154,8 @@ export async function PUT(request: NextRequest) {
           email: data.email,
           password: data.password,
           level: data.level,
+          phone: data.phone || null,
+          photo: data.photo || null,
         },
       });
 
