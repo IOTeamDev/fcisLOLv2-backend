@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, Subjects, MaterialType } from "@prisma/client";
-import { cookies } from "next/headers";
 import { verifyToken } from "@/utils/verifyToken";
 
 const prisma = new PrismaClient();
@@ -10,7 +9,6 @@ interface Data {
   subject: Subjects;
   link: string;
   type: MaterialType;
-  authorId: number;
 }
 
 const validSubjects = Object.values(Subjects);
@@ -51,7 +49,15 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body: Data = await request.json();
-    const { subject, link, type, authorId } = body;
+    const { subject, link, type } = body;
+
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const userDataFromToken = await verifyToken(token, { id: true });
 
     if (!validSubjects.includes(subject)) {
       return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
@@ -65,17 +71,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Link is required" }, { status: 400 });
     }
 
-    const cookieStore = cookies()
-    if (!cookieStore.has("token")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const token = cookieStore.get("token");
-    const userDataFromToken = await verifyToken(token, { id: true });
-    if (!authorId || authorId !== userDataFromToken.id) {
-      return NextResponse.json({ error: "Unauthorized"}, { status: 400 });
-    }
-
     const newData = await prisma.material.create({
       data: {
         subject,
@@ -83,14 +78,14 @@ export async function POST(request: NextRequest) {
         type,
         author: {
           connect: {
-            id: authorId,
+            id: userDataFromToken.id,
           },
         },
       },
     });
 
     await prisma.leaderboard.update({
-      where: { id: authorId },
+      where: { id: userDataFromToken.id },
       data: {
         points: {
           increment: 1,
@@ -109,30 +104,46 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const body: Data = await request.json();
-  const { id, authorId } = body;
+  const { id } = body;
 
   if (!id) {
-    return NextResponse.json({ error: "Material ID is required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Material ID is required" },
+      { status: 400 }
+    );
   }
 
   try {
     const materialId = Number(id);
 
-    const cookieStore = cookies()
-    if (!cookieStore.has("token")) {
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const token = cookieStore.get("token");
-    const userDataFromToken = await verifyToken(token, { id: true, role: true });
+    const token = authHeader.split(" ")[1];
+    const userDataFromToken = await verifyToken(token, {
+      id: true,
+      role: true,
+    });
+
     if (!userDataFromToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    } 
-    if (userDataFromToken.id === authorId || userDataFromToken.role === "ADMIN") {
-    await prisma.material.delete({
+    }
+
+    const material = await prisma.material.findUnique({
       where: { id: materialId },
     });
-  }
+
+    if (
+      userDataFromToken.id === material?.authorId ||
+      userDataFromToken.role === "ADMIN"
+    ) {
+      await prisma.material.delete({
+        where: { id: materialId },
+      });
+    }
+
     return NextResponse.json({ message: "Material deleted" });
   } catch (error) {
     return NextResponse.json(
