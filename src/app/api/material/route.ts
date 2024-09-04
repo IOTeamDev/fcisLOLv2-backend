@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
         subject: subject as Subjects,
       },
       select: {
+        id: true,
         link: true,
         type: true,
       },
