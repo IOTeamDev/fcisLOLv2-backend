@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, Level } from "@prisma/client";
+import { PrismaClient, Semester } from "@prisma/client";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/utils/verifyToken";
 
@@ -18,11 +18,11 @@ function validateUserData(data: any) {
     return { valid: false, message: "Invalid or missing password" };
   }
 
-  if (!data.level || !Object.values(Level).includes(data.level)) {
+  if (!data.semester || !Object.values(Semester).includes(data.semester)) {
     return {
       valid: false,
       message:
-        "Invalid or missing level. Valid Levels: One, Two, Three or Four",
+        "Invalid or missing semester. Valid values: One | Two | Three | Four | Five | Six | Seven | Eight",
     };
   }
 
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
         name: data.name,
         email: data.email,
         password: data.password,
-        level: data.level,
+        semester: data.semester,
         phone: data.phone || null,
         photo: data.photo || null,
         role: "STUDENT",
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       data: {
         name: newUser.name,
         points: 0,
-        level: newUser.level,
+        semester: newUser.semester,
       },
     });
 
@@ -153,7 +153,7 @@ export async function PUT(request: NextRequest) {
           name: data.name,
           email: data.email,
           password: data.password,
-          level: data.level,
+          semester: data.semester,
           phone: data.phone || null,
           photo: data.photo || null,
         },

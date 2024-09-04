@@ -15,7 +15,7 @@ model User {
   phone     String?
   photo     String?
   material  Material[]
-  level     Level
+  semester Semester
   role      Role
 }
 
@@ -24,11 +24,15 @@ enum Role {
   ADMIN
 }
 
-enum Level {
+enum Semester {
   One
   Two
   Three
   Four
+  Five
+  Six
+  Seven
+  Eight
 }
 
 model Material {
@@ -60,7 +64,7 @@ model Leaderboard {
   id        Int      @id @default(autoincrement())
   name      String
   points    Int
-  level    Level
+  semester    Semester
 }
 
 model Announcement {
@@ -69,7 +73,7 @@ model Announcement {
   content   String
   thumbnail String?
   type      AnnouncementType
-  level     Level
+  semester     Semester
 }
 
 enum AnnouncementType {
