@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, Semester } from "@prisma/client";
 import { verifyToken } from "@/utils/verifyToken";
+import { SignJWT } from "jose";
 
 const prisma = new PrismaClient();
 
@@ -45,8 +46,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "User not found" }, { status: 404 });
       }
 
-      const { password, ...userWithoutPassword } = user;
-      return NextResponse.json(userWithoutPassword);
+      const { password, ...filteredUser } = user;
+      return NextResponse.json(filteredUser);
     } else {
       const users = await prisma.user.findMany({
         include: {
@@ -85,7 +86,6 @@ export async function POST(request: NextRequest) {
 
     const newUser = await prisma.user.create({
       data: {
-        score: 0,
         name: data.name,
         email: data.email,
         password: data.password,
@@ -93,14 +93,27 @@ export async function POST(request: NextRequest) {
         phone: data.phone || null,
         photo: data.photo || null,
         role: "STUDENT",
+        score: 0,
       },
     });
 
-    const { password, role, ...userWithoutPassword } = newUser;
-    return NextResponse.json(userWithoutPassword, { status: 201 });
+    const { password, role, phone, photo, ...filteredUser } = newUser;
+
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const token = await new SignJWT({ userId: newUser.id })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime(Math.floor(Date.now() / 1000) + 12 * 30 * 24 * 60 * 60)
+      .sign(secret);
+
+    return NextResponse.json({
+      message: "success",
+      token: "Bearer " + token,
+      user: filteredUser,
+    });
   } catch (error) {
     console.error("Error creating user:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "user already exist with this Email" }, { status: 500 });
   }
 }
 
@@ -151,8 +164,8 @@ export async function PUT(request: NextRequest) {
         },
       });
 
-      const { password, ...userWithoutPassword } = updatedUser;
-      return NextResponse.json(userWithoutPassword);
+      const { password, ...filteredUser } = updatedUser;
+      return NextResponse.json(filteredUser);
     } else {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

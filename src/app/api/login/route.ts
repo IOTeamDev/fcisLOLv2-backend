@@ -47,11 +47,9 @@ export async function POST(request: NextRequest) {
       message: "success",
       token: "Bearer " + token,
       user: {
-        id: user.id,
         name: user.name,
         email: user.email,
-        level: user.semester,
-        phone: user.phone,
+        semester: user.semester,
       },
     });
   } catch (error) {
