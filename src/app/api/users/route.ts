@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const { password, role, phone, photo, ...filteredUser } = newUser;
+    const { password, phone, photo, ...filteredUser } = newUser;
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const token = await new SignJWT({ userId: newUser.id })

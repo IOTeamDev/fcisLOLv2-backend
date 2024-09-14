@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
         name: user.name,
         email: user.email,
         semester: user.semester,
+        role: user.role,
       },
     });
   } catch (error) {
