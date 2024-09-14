@@ -317,7 +317,7 @@ The response will be a JSON array of objects, each representing a participant on
 **Request:**
 
 ```http
-GET /api/leaderboard HTTP/1.1
+GET /api/leaderboard
 ```
 
 **Response:**
