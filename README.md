@@ -7,6 +7,7 @@
 
 **Request Parameters:**
 - **id** (optional): ID of the user to retrieve.
+- **haveMaterial** (default: false): true, false to get the material along with the user
 
 **Response:**
 - **200 OK:** Returns the user data excluding the password.
@@ -15,7 +16,7 @@
 
 **Example Request:**
 ```http
-GET /api/users?id=1
+GET /api/users?id=1&haveMaterial=true
 ```
 
 **Example Response:**
@@ -309,15 +310,14 @@ The response will be a JSON array of objects, each representing a participant on
 
 - **id** (integer): A unique identifier for the participant.
 - **name** (string): The name of the participant.
-- **points** (integer): The number of points the participant has accumulated.
-- **semester** (string): The semester in which the participant is competing.
-
+- **score** (integer): The number of points the participant has accumulated.
+  
 #### Example
 
 **Request:**
 
 ```http
-GET /api/leaderboard
+GET /api/leaderboard?semester=One
 ```
 
 **Response:**
@@ -327,14 +327,12 @@ GET /api/leaderboard
     {
         "id": 1,
         "name": "q",
-        "points": 1,
-        "semester": "Two"
+        "score": 1,
     },
     {
         "id": 2,
         "name": "bomba",
-        "points": 4,
-        "semester": "Two"
+        "score": 4,
     }
 ]
 ```
