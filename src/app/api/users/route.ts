@@ -135,12 +135,13 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: message }, { status: 400 });
     }
 
-    const cookieStore = cookies();
-    if (!cookieStore.has("token")) {
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const token = cookieStore.get("token");
+    const token = authHeader.split(" ")[1];
+
     const userDataFromToken = await verifyToken(token, { id: true });
 
     if (
