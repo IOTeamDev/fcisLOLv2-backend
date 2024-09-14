@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, Semester } from "@prisma/client";
-import { cookies } from "next/headers";
 import { verifyToken } from "@/utils/verifyToken";
 
 const prisma = new PrismaClient();
