@@ -90,10 +90,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await prisma.leaderboard.update({
-      where: { id: authorId },
+    await prisma.user.update({
+      where: {
+        id: authorId,
+      },
       data: {
-        points: {
+        score: {
           increment: 1,
         },
       },
@@ -101,10 +103,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(newData, { status: 201 });
   } catch (error) {
-    return NextResponse.json(
-      { error: error },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }
 

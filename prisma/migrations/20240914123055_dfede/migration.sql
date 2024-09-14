@@ -23,6 +23,7 @@ CREATE TABLE "User" (
     "photo" TEXT,
     "semester" "Semester" NOT NULL,
     "role" "Role" NOT NULL,
+    "points" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -36,16 +37,6 @@ CREATE TABLE "Material" (
     "authorId" INTEGER NOT NULL,
 
     CONSTRAINT "Material_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Leaderboard" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "points" INTEGER NOT NULL,
-    "semester" "Semester" NOT NULL,
-
-    CONSTRAINT "Leaderboard_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable

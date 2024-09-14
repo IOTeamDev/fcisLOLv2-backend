@@ -30,13 +30,14 @@ function validateUserData(data: any) {
 
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get("id");
+  const haveMaterial = request.nextUrl.searchParams.get("haveMaterial");
 
   try {
     if (id) {
       const user = await prisma.user.findUnique({
         where: { id: Number(id) },
         include: {
-          material: true,
+          material: haveMaterial === "true",
         },
       });
 
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
     } else {
       const users = await prisma.user.findMany({
         include: {
-          material: true,
+          material: haveMaterial === "true",
         },
       });
 
@@ -75,6 +76,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const data = await request.json();
+    console.log(data);
 
     const { valid, message } = validateUserData(data);
     if (!valid) {
@@ -83,6 +85,7 @@ export async function POST(request: NextRequest) {
 
     const newUser = await prisma.user.create({
       data: {
+        score: 0,
         name: data.name,
         email: data.email,
         password: data.password,
@@ -93,22 +96,11 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await prisma.leaderboard.create({
-      data: {
-        name: newUser.name,
-        points: 0,
-        semester: newUser.semester,
-      },
-    });
-
     const { password, role, ...userWithoutPassword } = newUser;
     return NextResponse.json(userWithoutPassword, { status: 201 });
   } catch (error) {
     console.error("Error creating user:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
