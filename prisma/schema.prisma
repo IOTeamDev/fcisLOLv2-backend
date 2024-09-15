@@ -43,6 +43,7 @@ model Material {
   type      MaterialType
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
+  accepted  Boolean
 }
 
 enum MaterialType {

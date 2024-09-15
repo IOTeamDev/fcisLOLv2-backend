@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
         id: true,
         link: true,
         type: true,
+        accepted: true,
       },
     });
 
@@ -82,6 +83,7 @@ export async function POST(request: NextRequest) {
         subject,
         link,
         type,
+        accepted: userDataFromToken.role === "ADMIN",
         author: {
           connect: {
             id: authorId,
