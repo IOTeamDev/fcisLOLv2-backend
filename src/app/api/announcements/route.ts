@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, AnnouncementType } from "@prisma/client";
+import { PrismaClient, AnnouncementType, Semester } from "@prisma/client";
 import { verifyToken } from "@/utils/verifyToken";
 
 const prisma = new PrismaClient();
@@ -14,15 +14,20 @@ function validateAnnouncementData(data: any) {
   }
 
   if (data.thumbnail && typeof data.thumbnail !== "string") {
-    return { valid: false, message: "Invalid thumbnail" };
+    return { valid: false, message: "Thumbnail should be a string" };
   }
 
   if (!data.type || !Object.values(AnnouncementType).includes(data.type)) {
     return { valid: false, message: "Invalid or missing type" };
   }
 
-  if (!data.semester || typeof data.semester !== "string") {
-    return { valid: false, message: "Invalid or missing semester" };
+  if (!data.semester || !Object.values(Semester).includes(data.semester)) {
+    return {
+      valid: false,
+      message: `Invalid or missing semester. Must be one of: ${Object.values(
+        Semester
+      ).join(", ")}`,
+    };
   }
 
   return { valid: true, message: "" };
@@ -52,7 +57,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching announcements:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: `Internal Server Error: ${error}` },
       { status: 500 }
     );
   }
@@ -69,14 +74,20 @@ export async function POST(request: NextRequest) {
 
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized: Missing or invalid Authorization header" },
+        { status: 401 }
+      );
     }
 
     const token = authHeader.split(" ")[1];
     const userDataFromToken = await verifyToken(token, { role: true });
 
     if (userDataFromToken.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Unauthorized: User does not have the required permissions" },
+        { status: 403 }
+      );
     }
 
     const newAnnouncement = await prisma.announcement.create({
@@ -93,7 +104,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error creating announcement:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: `Internal Server Error: ${error}` },
       { status: 500 }
     );
   }
@@ -112,14 +123,20 @@ export async function PUT(request: NextRequest) {
 
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized: Missing or invalid Authorization header" },
+        { status: 401 }
+      );
     }
 
     const token = authHeader.split(" ")[1];
     const userDataFromToken = await verifyToken(token, { role: true });
 
     if (userDataFromToken.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Unauthorized: User does not have the required permissions" },
+        { status: 403 }
+      );
     }
 
     const updatedAnnouncement = await prisma.announcement.update({
@@ -136,7 +153,7 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.error("Error updating announcement:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: `Internal Server Error: ${error}` },
       { status: 500 }
     );
   }
