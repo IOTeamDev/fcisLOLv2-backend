@@ -341,3 +341,128 @@ GET /api/leaderboard?semester=One
 
 - Ensure that the response data is sorted by points in descending order if required.
 - The `semester` field may be used to filter or sort the leaderboard based on the specific semester.
+
+## `/api/announcements`
+
+### GET
+**Description:** Retrieve announcement information. You can either get a specific announcement by ID or all announcements.
+
+**Request Parameters:**
+- **id** (optional): ID of the announcement to retrieve.
+
+**Response:**
+- **200 OK:** Returns the announcement data.
+- **404 Not Found:** Announcement not found (if an ID is provided).
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+GET /api/announcements?id=1
+```
+
+**Example Response:**
+```json
+{
+  "id": 1,
+  "title": "Assignment 1",
+  "content": "Details about Assignment 1.",
+  "thumbnail": "http://example.com/thumbnail.jpg",
+  "type": "Assignment",
+  "semester": "One"
+}
+```
+
+### POST
+**Description:** Create a new announcement.
+
+**Request Body:**
+- **title**: Title of the announcement.
+- **content**: Content of the announcement.
+- **thumbnail** (optional): URL of the thumbnail image.
+- **type**: Type of the announcement (  Assignment, Quiz, Other ).
+- **semester**: Semester of the announcement (must be one of the defined enum values).
+
+**Response:**
+- **201 Created:** Returns the created announcement.
+- **400 Bad Request:** Validation errors.
+- **401 Unauthorized:** If the request is unauthorized.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+POST /api/announcements
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "New Quiz",
+  "content": "Details about the new quiz.",
+  "thumbnail": "http://example.com/thumbnail.jpg",
+  "type": "Quiz",
+  "semester": "Two"
+}
+```
+
+**Example Response:**
+```json
+{
+  "id": 1,
+  "title": "New Quiz",
+  "content": "Details about the new quiz.",
+  "thumbnail": "http://example.com/thumbnail.jpg",
+  "type": "Quiz",
+  "semester": "Two"
+}
+```
+
+### PUT
+**Description:** Update an existing announcement.
+
+**Request Parameters:**
+- **id**: ID of the announcement to update.
+
+**Request Body:**
+- **title** (optional): Title of the announcement.
+- **content** (optional): Content of the announcement.
+- **thumbnail** (optional): URL of the thumbnail image.
+- **type** (optional): Type of the announcement (must be one of the defined enum values).
+- **semester** (optional): Semester of the announcement (must be one of the defined enum values).
+
+**Response:**
+- **200 OK:** Returns the updated announcement.
+- **400 Bad Request:** Validation errors.
+- **401 Unauthorized:** If the request is unauthorized.
+- **404 Not Found:** Announcement not found.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+PUT /api/announcements?id=1
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "Updated Assignment",
+  "content": "Updated details about the assignment.",
+  "thumbnail": "http://example.com/updated_thumbnail.jpg",
+  "type": "Assignment",
+  "semester": "Three"
+}
+```
+
+**Example Response:**
+```json
+{
+  "id": 1,
+  "title": "Updated Assignment",
+  "content": "Updated details about the assignment.",
+  "thumbnail": "http://example.com/updated_thumbnail.jpg",
+  "type": "Assignment",
+  "semester": "Three"
+}
+```
+
+### Notes
+- **Authorization:** For POST and PUT requests, include an `Authorization` header with a Bearer token.
+- **Validation:** Ensure that the `type` and `semester` fields match the defined enum values.
+- **Error Handling:** Responses include specific error messages for validation issues, unauthorized access, and internal server errors.
