@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
       email: true,
       name: true,
       semester: true,
+      role: true,
     });
 
     // Return the user data
