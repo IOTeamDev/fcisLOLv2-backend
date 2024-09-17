@@ -258,6 +258,39 @@ Content-Type: application/json
   "message": "Material deleted"
 }
 ```
+## `/api/material/accept`
+### GET
+**Description:** Authorizes the request and updates the `accepted` status of a material by its ID.
+
+**Request Parameters:**
+- **id**: ID of the material to update. (Required)
+- **accepted**: The new `accepted` status (`true` or `false`). (Required)
+
+**Headers:**
+- **Authorization**: `Bearer {token}` (Required)
+
+**Response:**
+- **200 OK:** Returns the updated material.
+- **400 Bad Request:** If the `id` or `accepted` status is missing or invalid.
+- **401 Unauthorized:** If the request is unauthorized or if the token is missing/invalid.
+- **403 Forbidden:** If the user does not have the required admin role.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+GET /api/materials?id=1&accepted=true
+Authorization: Bearer <token>
+```
+***Example response***
+```json
+{
+  "id": 1,
+  "subject": "CALC_1",
+  "link": "http://example.com",
+  "type": "YOUTUBE",
+  "accepted": true
+}
+```
 
 ## `/api/login`
 
@@ -366,7 +399,7 @@ GET /api/announcements?id=1
   "id": 1,
   "title": "Assignment 1",
   "content": "Details about Assignment 1.",
-  "thumbnail": "http://example.com/thumbnail.jpg",
+  "due_date": "...",
   "type": "Assignment",
   "semester": "One"
 }
@@ -378,7 +411,7 @@ GET /api/announcements?id=1
 **Request Body:**
 - **title**: Title of the announcement.
 - **content**: Content of the announcement.
-- **thumbnail** (optional): URL of the thumbnail image.
+- **due_date** due date
 - **type**: Type of the announcement (  Assignment, Quiz, Other ).
 - **semester**: Semester of the announcement (must be one of the defined enum values).
 
@@ -397,7 +430,7 @@ Content-Type: application/json
 {
   "title": "New Quiz",
   "content": "Details about the new quiz.",
-  "thumbnail": "http://example.com/thumbnail.jpg",
+  "sue_date": "...",
   "type": "Quiz",
   "semester": "Two"
 }
@@ -409,7 +442,7 @@ Content-Type: application/json
   "id": 1,
   "title": "New Quiz",
   "content": "Details about the new quiz.",
-  "thumbnail": "http://example.com/thumbnail.jpg",
+  "due_date": "due_date",
   "type": "Quiz",
   "semester": "Two"
 }
@@ -424,7 +457,7 @@ Content-Type: application/json
 **Request Body:**
 - **title** (optional): Title of the announcement.
 - **content** (optional): Content of the announcement.
-- **thumbnail** (optional): URL of the thumbnail image.
+- **due_date** due_date
 - **type** (optional): Type of the announcement (must be one of the defined enum values).
 - **semester** (optional): Semester of the announcement (must be one of the defined enum values).
 
@@ -444,7 +477,7 @@ Content-Type: application/json
 {
   "title": "Updated Assignment",
   "content": "Updated details about the assignment.",
-  "thumbnail": "http://example.com/updated_thumbnail.jpg",
+  "due_date": "due_date",
   "type": "Assignment",
   "semester": "Three"
 }
@@ -456,9 +489,39 @@ Content-Type: application/json
   "id": 1,
   "title": "Updated Assignment",
   "content": "Updated details about the assignment.",
-  "thumbnail": "http://example.com/updated_thumbnail.jpg",
+  "due_date": "due_date",
   "type": "Assignment",
   "semester": "Three"
+}
+```
+
+### DELETE
+**Description:** Delete an announcement by its ID.
+
+**Request Parameters:**
+- **id**: ID of the announcement to delete.
+
+**Response:**
+- **200 OK:** Returns the deleted announcement details.
+- **400 Bad Request:** If the ID parameter is missing.
+- **401 Unauthorized:** If the request is unauthorized.
+- **403 Forbidden:** If the user does not have the required permissions.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+DELETE /api/announcements?id=1
+Authorization: Bearer <token>
+```
+***Example Response***
+```http
+{
+  "id": 1,
+  "title": "Sample Announcement",
+  "content": "Details about the announcement.",
+  "due_date": "2024-01-01T00:00:00.000Z",
+  "type": "...",
+  "semester": "..."
 }
 ```
 
