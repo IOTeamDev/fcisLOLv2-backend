@@ -430,7 +430,7 @@ Content-Type: application/json
 {
   "title": "New Quiz",
   "content": "Details about the new quiz.",
-  "sue_date": "...",
+  "due_date": "...",
   "type": "Quiz",
   "semester": "Two"
 }
