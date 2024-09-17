@@ -68,7 +68,7 @@ model Announcement {
   content   String
   due_date  String?
   type      AnnouncementType
-  semester     Semester
+  semester  Semester
 }
 
 enum AnnouncementType {

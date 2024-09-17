@@ -13,8 +13,8 @@ function validateAnnouncementData(data: any) {
     return { valid: false, message: "Invalid or missing content" };
   }
 
-  if (data.thumbnail && typeof data.thumbnail !== "string") {
-    return { valid: false, message: "Thumbnail should be a string" };
+  if (data.due_date && typeof data.due_date !== "string") {
+    return { valid: false, message: "due date should be a string" };
   }
 
   if (!data.type || !Object.values(AnnouncementType).includes(data.type)) {
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
       data: {
         title: data.title,
         content: data.content,
-        thumbnail: data.thumbnail,
+        due_date: data.due_date,
         type: data.type,
         semester: data.semester,
       },
@@ -144,7 +144,7 @@ export async function PUT(request: NextRequest) {
       data: {
         title: data.title,
         content: data.content,
-        thumbnail: data.thumbnail,
+        due_date: data.due_date,
         type: data.type,
       },
     });
@@ -152,6 +152,46 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(updatedAnnouncement);
   } catch (error) {
     console.error("Error updating announcement:", error);
+    return NextResponse.json(
+      { error: `Internal Server Error: ${error}` },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const id = request.nextUrl.searchParams.get("id");
+
+  try {
+    if (!id) {
+      return NextResponse.json({ error: "ID parameter is missing" }, { status: 400 });
+    }
+
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json(
+        { error: "Unauthorized: Missing or invalid Authorization header" },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.split(" ")[1];
+    const userDataFromToken = await verifyToken(token, { role: true });
+
+    if (userDataFromToken.role !== "ADMIN") {
+      return NextResponse.json(
+        { error: "Unauthorized: User does not have the required permissions" },
+        { status: 403 }
+      );
+    }
+
+    const deletedAnnouncement = await prisma.announcement.delete({
+      where: { id: Number(id) },
+    });
+
+    return NextResponse.json(deletedAnnouncement);
+  } catch (error) {
+    console.error("Error deleting announcement:", error);
     return NextResponse.json(
       { error: `Internal Server Error: ${error}` },
       { status: 500 }
