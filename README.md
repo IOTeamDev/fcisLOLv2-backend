@@ -224,7 +224,7 @@ GET /api/material?semester=One&accepted=false
 **Request Body:**
 - **subject**: Subject of the material.
 - **link**: Link to the material.
-- **type**: Type of material (must be one of the defined enum values).
+- **type**: Type of material [DOCUMENT, VIDEO, OTHER].
 - **semester**:
 
 **Response:**

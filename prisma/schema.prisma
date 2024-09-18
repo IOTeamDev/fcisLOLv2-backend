@@ -48,9 +48,8 @@ model Material {
 }
 
 enum MaterialType {
-  YOUTUBE
-  DRIVE
-  TELEGRAM
+  DOCUMENT
+  VIDEO
   OTHER
 }
 
