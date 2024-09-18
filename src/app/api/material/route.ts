@@ -15,6 +15,79 @@ interface Data {
 const validSubjects = Object.values(Subjects);
 const validTypes = Object.values(MaterialType);
 
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const subject = searchParams.get("subject");
+  const semester = searchParams.get("semester");
+  const accepted = searchParams.get("accepted");
+
+  if (!subject || !semester || !accepted) {
+    return NextResponse.json(
+      { error: "Subject or semester is required. accepted is required" },
+      { status: 400 }
+    );
+  }
+
+  if (accepted !== "true" && accepted !== "false") {
+    return NextResponse.json(
+      { error: "Accepted must be either true or false" },
+      { status: 400 }
+    );
+  }
+
+  if (subject) {
+    if (!validSubjects.includes(subject as Subjects)) {
+      return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
+    }
+
+    try {
+      const data = await prisma.material.findMany({
+        where: {
+          subject: subject as Subjects,
+          accepted: accepted === "true",
+        },
+        select: {
+          link: true,
+          type: true,
+        },
+      });
+      return NextResponse.json(data);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 }
+      );
+    }
+  }
+
+  if (semester) {
+    if (!Object.values(Semester).includes(semester as Semester)) {
+      return NextResponse.json({ error: "Invalid semester" }, { status: 400 });
+    }
+
+    try {
+      const data = await prisma.material.findMany({
+        where: {
+          semester: semester as Semester,
+          accepted: accepted === "true",
+        },
+        select: {
+          link: true,
+          type: true,
+          subject: true,
+        },
+      });
+      return NextResponse.json(data);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 }
+      );
+    }
+  }
+}
+
+
 export async function POST(request: NextRequest) {
   try {
     const body: Data = await request.json();
