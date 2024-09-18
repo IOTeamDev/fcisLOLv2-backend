@@ -188,6 +188,9 @@ GET /api/material?subject=CALC_1&accepted=true
   {
     "link": "http://example.com/material1",
     "type": "YOUTUBE"
+    "author": {
+      "name": "bomba"
+    }
   }
 ]
 ```
@@ -204,6 +207,9 @@ GET /api/material?semester=One&accepted=false
     "link": "http://example.com/material1",
     "type": "YOUTUBE",
     "subject": "CALC_1"
+    "author": {
+      "name": "bomba"
+    }
   }
 ]
 ```
