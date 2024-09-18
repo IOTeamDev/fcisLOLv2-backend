@@ -166,7 +166,7 @@ Authorization: Bearer <token>
 - **accepted**: true or false
 -
 - **subject**: Subject to filter materials.
-or
+- or
 - **semester**: Semester to filter materials
 
 ### NOTE
