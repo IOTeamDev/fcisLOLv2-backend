@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, Subjects, MaterialType } from "@prisma/client";
+import { PrismaClient, Subjects, MaterialType, Semester } from "@prisma/client";
 import { verifyToken } from "@/utils/verifyToken";
 
 const prisma = new PrismaClient();
@@ -9,49 +9,16 @@ interface Data {
   subject: Subjects;
   link: string;
   type: MaterialType;
+  semester?: Semester;
 }
 
 const validSubjects = Object.values(Subjects);
 const validTypes = Object.values(MaterialType);
 
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const subject = searchParams.get("subject");
-
-  if (!subject) {
-    return NextResponse.json({ error: "Subject is required" }, { status: 400 });
-  }
-
-  if (!validSubjects.includes(subject as Subjects)) {
-    return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
-  }
-
-  try {
-    const data = await prisma.material.findMany({
-      where: {
-        subject: subject as Subjects,
-      },
-      select: {
-        id: true,
-        link: true,
-        type: true,
-        accepted: true,
-      },
-    });
-
-    return NextResponse.json(data);
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
     const body: Data = await request.json();
-    const { subject, link, type } = body;
+    const { subject, link, type, semester } = body;
 
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -78,11 +45,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Link is required" }, { status: 400 });
     }
 
+    if (
+      (semester && !Object.values(Semester).includes(semester)) ||
+      !semester
+    ) {
+      return NextResponse.json({ error: "Invalid semester" }, { status: 400 });
+    }
+
     const newData = await prisma.material.create({
       data: {
         subject,
         link,
         type,
+        semester,
         accepted: userDataFromToken.role === "ADMIN",
         author: {
           connect: {

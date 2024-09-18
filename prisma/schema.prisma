@@ -44,6 +44,7 @@ model Material {
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
   accepted  Boolean
+  semester  Semester
 }
 
 enum MaterialType {

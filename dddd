@@ -1,0 +1,48 @@
+## `/api/acceptedMaterial`
+
+### GET
+**Description:** Retrieve material information by subject or semester
+
+**Request Parameters:**
+- **subject**: Subject to filter materials.
+or
+- **semester**: Subject to filter materials
+
+### NOTE
+- if subject exists, semster will not be used
+
+**Response:**
+- **200 OK:** Returns a list of materials.
+- **400 Bad Request:** If the subject is missing or invalid.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+GET /api/material?subject=CALC_1
+```
+
+**Example Response:**
+```json
+[
+  {
+    "link": "http://example.com/material1",
+    "type": "YOUTUBE"
+  }
+]
+```
+
+**Example Request:**
+```http
+GET /api/material?semester=One
+```
+
+**Example Response:**
+```json
+[
+  {
+    "link": "http://example.com/material1",
+    "type": "YOUTUBE",
+    "subject": "CALC_1"
+  }
+]
+```

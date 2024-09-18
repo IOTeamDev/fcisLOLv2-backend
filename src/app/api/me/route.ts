@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { verifyToken } from "@/utils/verifyToken";
-
-const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   // Extract the Authorization header
