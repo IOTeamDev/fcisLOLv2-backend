@@ -159,6 +159,56 @@ Authorization: Bearer <token>
 
 ## `/api/material`
 
+### GET
+**Description:** Retrieve material information by subject or semester
+
+**Request Parameters:**
+- **accepted**: true or false
+-
+- **subject**: Subject to filter materials.
+or
+- **semester**: Semester to filter materials
+
+### NOTE
+- if subject exists, semester will not be used
+
+**Response:**
+- **200 OK:** Returns a list of materials.
+- **400 Bad Request:** If the subject is missing or invalid.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Request:**
+```http
+GET /api/material?subject=CALC_1&accepted=true
+```
+
+**Example Response:**
+```json
+[
+  {
+    "link": "http://example.com/material1",
+    "type": "YOUTUBE"
+  }
+]
+```
+
+**Example Request:**
+```http
+GET /api/material?semester=One&accepted=false
+```
+
+**Example Response:**
+```json
+[
+  {
+    "link": "http://example.com/material1",
+    "type": "YOUTUBE",
+    "subject": "CALC_1"
+  }
+]
+```
+
+
 ### POST
 **Description:** Create a new material entry.
 
@@ -264,55 +314,6 @@ Authorization: Bearer <token>
   "type": "YOUTUBE",
   "accepted": true
 }
-```
-
-## `/api/acceptedMaterial`
-
-### GET
-**Description:** Retrieve material information by subject or semester
-
-**Request Parameters:**
-- **subject**: Subject to filter materials.
-or
-- **semester**: Semester to filter materials
-
-### NOTE
-- if subject exists, semester will not be used
-
-**Response:**
-- **200 OK:** Returns a list of materials.
-- **400 Bad Request:** If the subject is missing or invalid.
-- **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-GET /api/material?subject=CALC_1
-```
-
-**Example Response:**
-```json
-[
-  {
-    "link": "http://example.com/material1",
-    "type": "YOUTUBE"
-  }
-]
-```
-
-**Example Request:**
-```http
-GET /api/material?semester=One
-```
-
-**Example Response:**
-```json
-[
-  {
-    "link": "http://example.com/material1",
-    "type": "YOUTUBE",
-    "subject": "CALC_1"
-  }
-]
 ```
 
 ## `/api/login`
