@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
   try {
     const body: Data = await request.json();
     const { subject, link, type, semester } = body;
-
+    
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
