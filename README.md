@@ -219,6 +219,7 @@ GET /api/material?semester=One&accepted=false
 - **subject**: Subject of the material.
 - **link**: Link to the material.
 - **type**: Type of material (must be one of the defined enum values).
+- **semester**:
 
 **Response:**
 - **201 Created:** Returns the created material.
@@ -236,6 +237,7 @@ Content-Type: application/json
   "subject": "CALC_1",
   "link": "http://example.com/newmaterial",
   "type": "DRIVE"
+  "semester": "One"
 }
 ```
 
