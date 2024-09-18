@@ -317,6 +317,10 @@ Authorization: Bearer <token>
   "accepted": true
 }
 ```
+## `/api/specificMaterial`
+request: pass an `id` parameter
+response: material of the id
+(Too lazy to write another doc)
 
 ## `/api/login`
 
