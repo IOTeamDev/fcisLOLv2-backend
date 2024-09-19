@@ -21,6 +21,9 @@ export async function GET(request: NextRequest) {
       name: true,
       semester: true,
       role: true,
+      phone: true,
+      photo: true,
+      material: true
     });
 
     // Return the user data
