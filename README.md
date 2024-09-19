@@ -242,7 +242,7 @@ Content-Type: application/json
 {
   "subject": "CALC_1",
   "link": "http://example.com/newmaterial",
-  "type": "DRIVE"
+  "type": "DOCUMENT"
   "semester": "One"
 }
 ```
@@ -253,7 +253,7 @@ Content-Type: application/json
   "id": 1,
   "subject": "CALC_1",
   "link": "http://example.com/newmaterial",
-  "type": "DRIVE",
+  "type": "DOCUMENT",
   "authorId": 1
 }
 ```
