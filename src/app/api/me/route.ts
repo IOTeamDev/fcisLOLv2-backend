@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
       role: true,
       phone: true,
       photo: true,
-      material: true
     });
 
     // Return the user data
