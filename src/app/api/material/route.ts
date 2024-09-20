@@ -21,16 +21,23 @@ export async function GET(request: NextRequest) {
   const semester = searchParams.get("semester");
   const accepted = searchParams.get("accepted");
 
-  if (!subject || !semester || !accepted) {
+  if (!accepted) {
     return NextResponse.json(
-      { error: "Subject or semester is required. accepted is required" },
+      { error: "accepted is required" },
+      { status: 400 }
+    );
+  }
+
+  if (!subject || !semester) {
+    return NextResponse.json(
+      { error: "(subject) OR (semester) is required" },
       { status: 400 }
     );
   }
 
   if (accepted !== "true" && accepted !== "false") {
     return NextResponse.json(
-      { error: "Accepted must be either true or false" },
+      { error: "accepted must be either true or false" },
       { status: 400 }
     );
   }
