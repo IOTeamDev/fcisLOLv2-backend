@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (!subject || !semester) {
+  if (!subject && !semester) {
     return NextResponse.json(
       { error: "(subject) OR (semester) is required" },
       { status: 400 }
