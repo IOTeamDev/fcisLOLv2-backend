@@ -188,6 +188,7 @@ GET /api/material?subject=CALC_1&accepted=true
   {
     "link": "http://example.com/material1",
     "type": "YOUTUBE"
+    ... and more
     "author": {
       "name": "bomba"
     }
@@ -207,6 +208,7 @@ GET /api/material?semester=One&accepted=false
     "link": "http://example.com/material1",
     "type": "YOUTUBE",
     "subject": "CALC_1"
+    ... and more
     "author": {
       "name": "bomba"
     }
@@ -226,6 +228,8 @@ GET /api/material?semester=One&accepted=false
 - **link**: Link to the material.
 - **type**: Type of material [DOCUMENT, VIDEO, OTHER].
 - **semester**:
+- **title**
+- **description**
 
 **Response:**
 - **201 Created:** Returns the created material.
@@ -242,8 +246,10 @@ Content-Type: application/json
 {
   "subject": "CALC_1",
   "link": "http://example.com/newmaterial",
-  "type": "DRIVE"
-  "semester": "One"
+  "type": "DRIVE",
+  "semester": "One",
+  "description": "deded",
+  "title":"fefef"
 }
 ```
 
