@@ -86,9 +86,15 @@ export async function GET(request: NextRequest) {
           accepted: accepted === "true",
         },
         select: {
+          id: true,
           link: true,
           type: true,
-          subject: true,
+          author: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
         },
       });
       return NextResponse.json(data);
