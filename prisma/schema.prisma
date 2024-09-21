@@ -45,6 +45,8 @@ model Material {
   authorId  Int
   accepted  Boolean
   semester  Semester
+  title     String
+  description String?
 }
 
 enum MaterialType {

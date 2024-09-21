@@ -10,6 +10,8 @@ interface Data {
   link: string;
   type: MaterialType;
   semester?: Semester;
+  title?: string;
+  description?: string;
 }
 
 const validSubjects = Object.values(Subjects);
@@ -57,6 +59,8 @@ export async function GET(request: NextRequest) {
           id: true,
           link: true,
           type: true,
+          title: true,
+          description: true,
           author: {
             select: {
               name: true,
@@ -89,6 +93,8 @@ export async function GET(request: NextRequest) {
           id: true,
           link: true,
           type: true,
+          title: true,
+          description: true,
           author: {
             select: {
               name: true,
@@ -110,7 +116,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body: Data = await request.json();
-    const { subject, link, type, semester } = body;
+    const { subject, link, type, semester, title, description } = body;
 
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -150,6 +156,8 @@ export async function POST(request: NextRequest) {
         link,
         type,
         semester,
+        title: title || "",
+        description: description || "",
         accepted: userDataFromToken.role === "ADMIN",
         author: {
           connect: {
