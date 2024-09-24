@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const { password, phone, photo, ...filteredUser } = newUser;
+    const { password, phone, ...filteredUser } = newUser;
 
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const token = await new SignJWT({ userId: newUser.id })
@@ -113,7 +113,10 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error creating user:", error);
-    return NextResponse.json({ error: "user already exist with this Email" }, { status: 500 });
+    return NextResponse.json(
+      { error: "user already exist with this Email" },
+      { status: 500 }
+    );
   }
 }
 
