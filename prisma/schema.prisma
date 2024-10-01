@@ -71,6 +71,7 @@ model Announcement {
   due_date  String?
   type      AnnouncementType
   semester  Semester
+  image     String?
 }
 
 enum AnnouncementType {

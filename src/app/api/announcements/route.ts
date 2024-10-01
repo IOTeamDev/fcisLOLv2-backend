@@ -97,6 +97,7 @@ export async function POST(request: NextRequest) {
         due_date: data.due_date,
         type: data.type,
         semester: data.semester,
+        image: data.image || null,
       },
     });
 
@@ -164,7 +165,10 @@ export async function DELETE(request: NextRequest) {
 
   try {
     if (!id) {
-      return NextResponse.json({ error: "ID parameter is missing" }, { status: 400 });
+      return NextResponse.json(
+        { error: "ID parameter is missing" },
+        { status: 400 }
+      );
     }
 
     const authHeader = request.headers.get("Authorization");
