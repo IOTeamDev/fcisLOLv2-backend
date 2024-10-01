@@ -3,23 +3,28 @@
 ## `/api/users`
 
 ### GET
+
 **Description:** Retrieve user information. You can either get a specific user by ID or all users.
 
 **Request Parameters:**
+
 - **id** (optional): ID of the user to retrieve.
 - **haveMaterial** (default: false): true, false to get the material along with the user
 
 **Response:**
+
 - **200 OK:** Returns the user data excluding the password.
 - **404 Not Found:** User not found (if an ID is provided).
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 GET /api/users?id=1&haveMaterial=true
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -34,9 +39,11 @@ GET /api/users?id=1&haveMaterial=true
 ```
 
 ### POST
+
 **Description:** Create a new user.
 
 **Request Body:**
+
 - **name**: User's name.
 - **email**: User's email.
 - **password**: User's password.
@@ -45,11 +52,13 @@ GET /api/users?id=1&haveMaterial=true
 - **photo** (optional): URL of the user's photo.
 
 **Response:**
+
 - **201 Created:** Returns the created user data excluding the password.
 - **400 Bad Request:** Validation errors.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 POST /api/users
 Content-Type: application/json
@@ -63,6 +72,7 @@ Content-Type: application/json
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 2,
@@ -77,12 +87,15 @@ Content-Type: application/json
 ```
 
 ### PUT
+
 **Description:** Update an existing user.
 
 **Request Parameters:**
+
 - **id**: ID of the user to update.
 
 **Request Body:**
+
 - **name**: User's name.
 - **email**: User's email.
 - **password**: User's password.
@@ -91,6 +104,7 @@ Content-Type: application/json
 - **photo** (optional): URL of the user's photo.
 
 **Response:**
+
 - **200 OK:** Returns the updated user data excluding the password.
 - **400 Bad Request:** Validation errors.
 - **401 Unauthorized:** If the request is unauthorized.
@@ -98,6 +112,7 @@ Content-Type: application/json
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 PUT /api/users?id=1
 Content-Type: application/json
@@ -111,6 +126,7 @@ Content-Type: application/json
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -127,23 +143,28 @@ Content-Type: application/json
 ## `/api/me`
 
 ### GET
+
 **Description:** Retrieve the currently authenticated user data.
 
 **Request Headers:**
+
 - **Authorization**: Bearer token.
 
 **Response:**
+
 - **200 OK:** Returns the user data excluding the password.
 - **401 Unauthorized:** If the request is unauthorized.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 GET /api/me
 Authorization: Bearer <token>
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -160,9 +181,11 @@ Authorization: Bearer <token>
 ## `/api/material`
 
 ### GET
+
 **Description:** Retrieve material information by subject or semester
 
 **Request Parameters:**
+
 - **accepted**: true or false
 -
 - **subject**: Subject to filter materials.
@@ -170,19 +193,23 @@ Authorization: Bearer <token>
 - **semester**: Semester to filter materials
 
 ### NOTE
+
 - if subject exists, semester will not be used
 
 **Response:**
+
 - **200 OK:** Returns a list of materials.
 - **400 Bad Request:** If the subject is missing or invalid.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 GET /api/material?subject=CALC_1&accepted=true
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -197,11 +224,13 @@ GET /api/material?subject=CALC_1&accepted=true
 ```
 
 **Example Request:**
+
 ```http
 GET /api/material?semester=One&accepted=false
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -216,14 +245,16 @@ GET /api/material?semester=One&accepted=false
 ]
 ```
 
-
 ### POST
+
 **Description:** Create a new material entry.
 
 **Request Headers:**
+
 - **Authorization**: Bearer token.
 
 **Request Body:**
+
 - **subject**: Subject of the material.
 - **link**: Link to the material.
 - **type**: Type of material [DOCUMENT, VIDEO, OTHER].
@@ -232,12 +263,14 @@ GET /api/material?semester=One&accepted=false
 - **description**
 
 **Response:**
+
 - **201 Created:** Returns the created material.
 - **400 Bad Request:** Validation errors or missing authorization.
 - **401 Unauthorized:** If the request is unauthorized.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 POST /api/material
 Authorization: Bearer <token>
@@ -254,6 +287,7 @@ Content-Type: application/json
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -265,21 +299,26 @@ Content-Type: application/json
 ```
 
 ### DELETE
+
 **Description:** Delete a material entry.
 
 **Request Headers:**
+
 - **Authorization**: Bearer token.
 
 **Request Body:**
+
 - **id**: ID of the material to delete.
 
 **Response:**
+
 - **200 OK:** Confirmation of deletion.
 - **400 Bad Request:** If the ID is missing or invalid.
 - **401 Unauthorized:** If the request is unauthorized.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 DELETE /api/material
 Authorization: Bearer <token>
@@ -291,23 +330,30 @@ Content-Type: application/json
 ```
 
 **Example Response:**
+
 ```json
 {
   "message": "Material deleted"
 }
 ```
+
 ## `/api/material/accept`
+
 ### GET
+
 **Description:** Authorizes the request and updates the `accepted` status of a material by its ID.
 
 **Request Parameters:**
+
 - **id**: ID of the material to update. (Required)
 - **accepted**: The new `accepted` status (`true` or `false`). (Required)
 
 **Headers:**
+
 - **Authorization**: `Bearer {token}` (Required)
 
 **Response:**
+
 - **200 OK:** Returns the updated material.
 - **400 Bad Request:** If the `id` or `accepted` status is missing or invalid.
 - **401 Unauthorized:** If the request is unauthorized or if the token is missing/invalid.
@@ -315,11 +361,14 @@ Content-Type: application/json
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 GET /api/materials?id=1&accepted=true
 Authorization: Bearer <token>
 ```
-***Example response***
+
+**_Example response_**
+
 ```json
 {
   "id": 1,
@@ -329,7 +378,9 @@ Authorization: Bearer <token>
   "accepted": true
 }
 ```
+
 ## `/api/specificMaterial`
+
 request: pass an `id` parameter
 response: material of the id
 (Too lazy to write another doc)
@@ -337,18 +388,22 @@ response: material of the id
 ## `/api/login`
 
 ### POST
+
 **Description:** Authenticate a user and obtain a JWT token.
 
 **Request Body:**
+
 - **email**: User's email.
 - **password**: User's password.
 
 **Response:**
+
 - **200 OK:** Returns a JWT token and user data.
 - **400 Bad Request:** If email or password is missing.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 POST /api/login
 Content-Type: application/json
@@ -360,6 +415,7 @@ Content-Type: application/json
 ```
 
 **Example Response:**
+
 ```json
 {
   "message": "success",
@@ -373,6 +429,7 @@ Content-Type: application/json
   }
 }
 ```
+
 ## `/api/leaderboard`
 
 #### Description
@@ -386,7 +443,7 @@ The response will be a JSON array of objects, each representing a participant on
 - **id** (integer): A unique identifier for the participant.
 - **name** (string): The name of the participant.
 - **score** (integer): The number of points the participant has accumulated.
-  
+
 #### Example
 
 **Request:**
@@ -399,16 +456,16 @@ GET /api/leaderboard?semester=One
 
 ```json
 [
-    {
-        "id": 1,
-        "name": "q",
-        "score": 1,
-    },
-    {
-        "id": 2,
-        "name": "bomba",
-        "score": 4,
-    }
+  {
+    "id": 1,
+    "name": "q",
+    "score": 1
+  },
+  {
+    "id": 2,
+    "name": "bomba",
+    "score": 4
+  }
 ]
 ```
 
@@ -420,22 +477,27 @@ GET /api/leaderboard?semester=One
 ## `/api/announcements`
 
 ### GET
+
 **Description:** Retrieve announcement information. You can either get a specific announcement by ID or all announcements.
 
 **Request Parameters:**
+
 - **id** (optional): ID of the announcement to retrieve.
 
 **Response:**
+
 - **200 OK:** Returns the announcement data.
 - **404 Not Found:** Announcement not found (if an ID is provided).
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 GET /api/announcements?id=1
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -443,27 +505,32 @@ GET /api/announcements?id=1
   "content": "Details about Assignment 1.",
   "due_date": "...",
   "type": "Assignment",
-  "semester": "One"
+  "semester": "One",
+  "image": "something"
 }
 ```
 
 ### POST
+
 **Description:** Create a new announcement.
 
 **Request Body:**
+
 - **title**: Title of the announcement.
 - **content**: Content of the announcement.
 - **due_date** due date
-- **type**: Type of the announcement (  Assignment, Quiz, Other ).
+- **type**: Type of the announcement ( Assignment, Quiz, Other ).
 - **semester**: Semester of the announcement (must be one of the defined enum values).
 
 **Response:**
+
 - **201 Created:** Returns the created announcement.
 - **400 Bad Request:** Validation errors.
 - **401 Unauthorized:** If the request is unauthorized.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 POST /api/announcements
 Authorization: Bearer <token>
@@ -474,11 +541,13 @@ Content-Type: application/json
   "content": "Details about the new quiz.",
   "due_date": "...",
   "type": "Quiz",
-  "semester": "Two"
+  "semester": "Two",
+  "image": "something"
 }
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -491,12 +560,15 @@ Content-Type: application/json
 ```
 
 ### PUT
+
 **Description:** Update an existing announcement.
 
 **Request Parameters:**
+
 - **id**: ID of the announcement to update.
 
 **Request Body:**
+
 - **title** (optional): Title of the announcement.
 - **content** (optional): Content of the announcement.
 - **due_date** due_date
@@ -504,6 +576,7 @@ Content-Type: application/json
 - **semester** (optional): Semester of the announcement (must be one of the defined enum values).
 
 **Response:**
+
 - **200 OK:** Returns the updated announcement.
 - **400 Bad Request:** Validation errors.
 - **401 Unauthorized:** If the request is unauthorized.
@@ -511,6 +584,7 @@ Content-Type: application/json
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 PUT /api/announcements?id=1
 Authorization: Bearer <token>
@@ -526,6 +600,7 @@ Content-Type: application/json
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -538,12 +613,15 @@ Content-Type: application/json
 ```
 
 ### DELETE
+
 **Description:** Delete an announcement by its ID.
 
 **Request Parameters:**
+
 - **id**: ID of the announcement to delete.
 
 **Response:**
+
 - **200 OK:** Returns the deleted announcement details.
 - **400 Bad Request:** If the ID parameter is missing.
 - **401 Unauthorized:** If the request is unauthorized.
@@ -551,11 +629,14 @@ Content-Type: application/json
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Request:**
+
 ```http
 DELETE /api/announcements?id=1
 Authorization: Bearer <token>
 ```
-***Example Response***
+
+**_Example Response_**
+
 ```http
 {
   "id": 1,
@@ -568,6 +649,7 @@ Authorization: Bearer <token>
 ```
 
 ### Notes
+
 - **Authorization:** For POST and PUT requests, include an `Authorization` header with a Bearer token.
 - **Validation:** Ensure that the `type` and `semester` fields match the defined enum values.
 - **Error Handling:** Responses include specific error messages for validation issues, unauthorized access, and internal server errors.

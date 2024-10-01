@@ -60,6 +60,7 @@ export async function GET(request: NextRequest) {
           link: true,
           type: true,
           title: true,
+          subject: true,
           description: true,
           author: {
             select: {
@@ -95,6 +96,7 @@ export async function GET(request: NextRequest) {
           type: true,
           title: true,
           description: true,
+          subject: true,
           author: {
             select: {
               name: true,
