@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
     }
 
     const token = authHeader.split(" ")[1];
-    const userDataFromToken = await verifyToken(token, { id: true });
+    const userDataFromToken = await verifyToken(token, { id: true, role: true });
     const authorId = Number(userDataFromToken.id);
 
     if (!authorId || authorId !== userDataFromToken.id) {
