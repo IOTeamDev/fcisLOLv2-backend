@@ -35,7 +35,7 @@ function validateAnnouncementData(data: any) {
 
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get("id");
-
+  const semester = request.nextUrl.searchParams.get("semester");
   try {
     if (id) {
       const announcement = await prisma.announcement.findUnique({
@@ -50,6 +50,11 @@ export async function GET(request: NextRequest) {
       }
 
       return NextResponse.json(announcement);
+    } else if (semester) {
+      const announcements = await prisma.announcement.findMany({
+        where: { semester: semester as Semester },
+      });
+      return NextResponse.json(announcements);
     } else {
       const announcements = await prisma.announcement.findMany();
       return NextResponse.json(announcements);
