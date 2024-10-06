@@ -94,6 +94,7 @@ export async function POST(request: NextRequest) {
         photo: data.photo || null,
         role: "STUDENT",
         score: 0,
+        fcmToken: data.fcmToken || null,
       },
     });
 

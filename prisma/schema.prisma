@@ -18,6 +18,7 @@ model User {
   semester  Semester
   role      Role
   score     Int     
+  fcmToken  String?
 }
 
 enum Role {
