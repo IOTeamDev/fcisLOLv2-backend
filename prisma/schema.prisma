@@ -18,6 +18,7 @@ model User {
   semester  Semester
   role      Role
   score     Int     
+  fcmToken  String?
 }
 
 enum Role {
@@ -45,6 +46,8 @@ model Material {
   authorId  Int
   accepted  Boolean
   semester  Semester
+  title     String
+  description String?
 }
 
 enum MaterialType {
@@ -54,13 +57,63 @@ enum MaterialType {
 }
 
 enum Subjects {
-  CALC_1
-  CALC_2
-  PHYSICS_1
-  PHYSICS_2
-  INTRO_TO_CS
-  // more subjects here
+    // Semester 1
+    Introduction_to_Computer_Sciences
+    Physics
+    Calculus
+    Psychology
+    Probability_and_Statistics
+    English
+
+    // Semester 2
+    Structured_Programming
+    Ethics
+    Physics_II
+    Business
+    Calculus_II
+    Electronics
+
+    // Semester 3
+    OOP
+    Statistical_Analysis
+    Logic_Design
+    Discrete_Mathematics
+    Database_Management_Systems
+    Report_Writing
+
+    // Semester 4
+    Computer_Architecture
+    Data_Structures
+    Linear_Algebra
+    Artificial_Intelligence
+    Operations_Research
+
+    // Semester 5
+    Operating_Systems
+    DSP
+    Computer_Networks
+    System_Analysis_and_Design
+    Data_Mining
+    Compiler_Theory
+    Numerical_Computing
+    Statistical_Inference
+    Microprocessors_and_Interfacing
+
+    // Semester 6
+    Software_Engineering
+    Concepts_of_Programming_Languages
+    HPC
+    Analysis_and_Design_of_Algorithms
+    Data_Security
+    Computer_Graphics
+    Machine_Learning
+    Web_Development
+    Business_Intelligence
+    Data_Communication
+    NLP
+    Embedded_Systems
 }
+
 
 model Announcement {
   id        Int      @id @default(autoincrement())
@@ -69,6 +122,7 @@ model Announcement {
   due_date  String?
   type      AnnouncementType
   semester  Semester
+  image     String?
 }
 
 enum AnnouncementType {

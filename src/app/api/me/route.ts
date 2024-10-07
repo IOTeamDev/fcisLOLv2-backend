@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       role: true,
       phone: true,
       photo: true,
-    });
+    }, true);
 
     // Return the user data
     return NextResponse.json(userDataFromToken);

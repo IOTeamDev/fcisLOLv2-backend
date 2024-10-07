@@ -1,567 +1,325 @@
-# API Documentation
+# FCIS LOL API Documentation
 
-## `/api/users`
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Authentication](#authentication)
+3. [Users](#users)
+4. [Materials](#materials)
+5. [Announcements](#announcements)
+6. [Leaderboard](#leaderboard)
 
-### GET
-**Description:** Retrieve user information. You can either get a specific user by ID or all users.
+## Introduction
 
-**Request Parameters:**
-- **id** (optional): ID of the user to retrieve.
-- **haveMaterial** (default: false): true, false to get the material along with the user
+This document provides detailed information about the FCIS LOL API endpoints, their functionality, required parameters, and expected responses.
 
-**Response:**
-- **200 OK:** Returns the user data excluding the password.
-- **404 Not Found:** User not found (if an ID is provided).
-- **500 Internal Server Error:** If there is an issue with the server.
+## Authentication
 
-**Example Request:**
-```http
-GET /api/users?id=1&haveMaterial=true
+All protected routes require a valid JWT token in the Authorization header:
+
 ```
-
-**Example Response:**
-```json
-{
-  "id": 1,
-  "name": "John Doe",
-  "email": "john.doe@example.com",
-  "phone": "1234567890",
-  "photo": "http://example.com/photo.jpg",
-  "semester": "One",
-  "role": "STUDENT",
-  "material": []
-}
-```
-
-### POST
-**Description:** Create a new user.
-
-**Request Body:**
-- **name**: User's name.
-- **email**: User's email.
-- **password**: User's password.
-- **semester**: User's semester (must be one of the defined enum values).
-- **phone** (optional): User's phone number.
-- **photo** (optional): URL of the user's photo.
-
-**Response:**
-- **201 Created:** Returns the created user data excluding the password.
-- **400 Bad Request:** Validation errors.
-- **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-POST /api/users
-Content-Type: application/json
-
-{
-  "name": "Jane Doe",
-  "email": "jane.doe@example.com",
-  "password": "password123",
-  "semester": "Two"
-}
-```
-
-**Example Response:**
-```json
-{
-  "id": 2,
-  "name": "Jane Doe",
-  "email": "jane.doe@example.com",
-  "phone": null,
-  "photo": null,
-  "semester": "Two",
-  "role": "STUDENT",
-  "material": []
-}
-```
-
-### PUT
-**Description:** Update an existing user.
-
-**Request Parameters:**
-- **id**: ID of the user to update.
-
-**Request Body:**
-- **name**: User's name.
-- **email**: User's email.
-- **password**: User's password.
-- **semester**: User's semester (must be one of the defined enum values).
-- **phone** (optional): User's phone number.
-- **photo** (optional): URL of the user's photo.
-
-**Response:**
-- **200 OK:** Returns the updated user data excluding the password.
-- **400 Bad Request:** Validation errors.
-- **401 Unauthorized:** If the request is unauthorized.
-- **404 Not Found:** User not found.
-- **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-PUT /api/users?id=1
-Content-Type: application/json
-
-{
-  "name": "John Smith",
-  "email": "john.smith@example.com",
-  "password": "newpassword123",
-  "semester": "Three"
-}
-```
-
-**Example Response:**
-```json
-{
-  "id": 1,
-  "name": "John Smith",
-  "email": "john.smith@example.com",
-  "phone": "1234567890",
-  "photo": "http://example.com/photo.jpg",
-  "semester": "Three",
-  "role": "STUDENT",
-  "material": []
-}
-```
-
-## `/api/me`
-
-### GET
-**Description:** Retrieve the currently authenticated user data.
-
-**Request Headers:**
-- **Authorization**: Bearer token.
-
-**Response:**
-- **200 OK:** Returns the user data excluding the password.
-- **401 Unauthorized:** If the request is unauthorized.
-- **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-GET /api/me
 Authorization: Bearer <token>
 ```
 
-**Example Response:**
-```json
-{
-  "id": 1,
-  "name": "John Doe",
-  "email": "john.doe@example.com",
-  "phone": "1234567890",
-  "photo": "http://example.com/photo.jpg",
-  "semester": "One",
-  "role": "STUDENT",
-  "material": []
-}
-```
+### POST /api/login
 
-## `/api/material`
-
-### GET
-**Description:** Retrieve material information by subject or semester
-
-**Request Parameters:**
-- **accepted**: true or false
--
-- **subject**: Subject to filter materials.
-- or
-- **semester**: Semester to filter materials
-
-### NOTE
-- if subject exists, semester will not be used
-
-**Response:**
-- **200 OK:** Returns a list of materials.
-- **400 Bad Request:** If the subject is missing or invalid.
-- **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-GET /api/material?subject=CALC_1&accepted=true
-```
-
-**Example Response:**
-```json
-[
-  {
-    "link": "http://example.com/material1",
-    "type": "YOUTUBE"
-    "author": {
-      "name": "bomba"
-    }
-  }
-]
-```
-
-**Example Request:**
-```http
-GET /api/material?semester=One&accepted=false
-```
-
-**Example Response:**
-```json
-[
-  {
-    "link": "http://example.com/material1",
-    "type": "YOUTUBE",
-    "subject": "CALC_1"
-    "author": {
-      "name": "bomba"
-    }
-  }
-]
-```
-
-
-### POST
-**Description:** Create a new material entry.
-
-**Request Headers:**
-- **Authorization**: Bearer token.
+Authenticate a user and obtain a JWT token.
 
 **Request Body:**
-- **subject**: Subject of the material.
-- **link**: Link to the material.
-- **type**: Type of material [DOCUMENT, VIDEO, OTHER].
-- **semester**:
-
-**Response:**
-- **201 Created:** Returns the created material.
-- **400 Bad Request:** Validation errors or missing authorization.
-- **401 Unauthorized:** If the request is unauthorized.
-- **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-POST /api/material
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "subject": "CALC_1",
-  "link": "http://example.com/newmaterial",
-  "type": "DOCUMENT"
-  "semester": "One"
-}
-```
-
-**Example Response:**
 ```json
 {
-  "id": 1,
-  "subject": "CALC_1",
-  "link": "http://example.com/newmaterial",
-  "type": "DOCUMENT",
-  "authorId": 1
+  "email": "string",
+  "password": "string"
 }
 ```
-
-### DELETE
-**Description:** Delete a material entry.
-
-**Request Headers:**
-- **Authorization**: Bearer token.
-
-**Request Body:**
-- **id**: ID of the material to delete.
-
-**Response:**
-- **200 OK:** Confirmation of deletion.
-- **400 Bad Request:** If the ID is missing or invalid.
-- **401 Unauthorized:** If the request is unauthorized.
-- **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-DELETE /api/material
-Authorization: Bearer <token>
-Content-Type: application/json
-
-{
-  "id": 1
-}
-```
-
-**Example Response:**
-```json
-{
-  "message": "Material deleted"
-}
-```
-## `/api/material/accept`
-### GET
-**Description:** Authorizes the request and updates the `accepted` status of a material by its ID.
-
-**Request Parameters:**
-- **id**: ID of the material to update. (Required)
-- **accepted**: The new `accepted` status (`true` or `false`). (Required)
-
-**Headers:**
-- **Authorization**: `Bearer {token}` (Required)
-
-**Response:**
-- **200 OK:** Returns the updated material.
-- **400 Bad Request:** If the `id` or `accepted` status is missing or invalid.
-- **401 Unauthorized:** If the request is unauthorized or if the token is missing/invalid.
-- **403 Forbidden:** If the user does not have the required admin role.
-- **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-GET /api/materials?id=1&accepted=true
-Authorization: Bearer <token>
-```
-***Example response***
-```json
-{
-  "id": 1,
-  "subject": "CALC_1",
-  "link": "http://example.com",
-  "type": "YOUTUBE",
-  "accepted": true
-}
-```
-## `/api/specificMaterial`
-request: pass an `id` parameter
-response: material of the id
-(Too lazy to write another doc)
-
-## `/api/login`
-
-### POST
-**Description:** Authenticate a user and obtain a JWT token.
-
-**Request Body:**
-- **email**: User's email.
-- **password**: User's password.
 
 **Response:**
 - **200 OK:** Returns a JWT token and user data.
-- **400 Bad Request:** If email or password is missing.
+- **400 Bad Request:** If email or password is missing or invalid.
 - **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-POST /api/login
-Content-Type: application/json
-
-{
-  "email": "john.doe@example.com",
-  "password": "password123"
-}
-```
 
 **Example Response:**
 ```json
 {
   "message": "success",
-  "token": "<JWT_TOKEN>",
+  "token": "Bearer <token>",
   "user": {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "level": "One",
-    "phone": "1234567890"
+    "name": "string",
+    "email": "string",
+    "semester": "string",
+    "role": "string",
+    "photo": "string | null"
   }
 }
 ```
-## `/api/leaderboard`
 
-#### Description
+### GET /api/me
 
-Fetches the current leaderboard data, which includes a list of participants, their points, and the associated semester.
+Retrieve the currently authenticated user's data.
 
-#### Response
+**Headers:**
+- Authorization: Bearer token
 
-The response will be a JSON array of objects, each representing a participant on the leaderboard. The structure of each object is as follows:
+**Response:**
+- **200 OK:** Returns user data.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **500 Internal Server Error:** If there is an issue with the server.
 
-- **id** (integer): A unique identifier for the participant.
-- **name** (string): The name of the participant.
-- **score** (integer): The number of points the participant has accumulated.
-  
-#### Example
+**Example Response:**
+```json
+{
+  "id": "number",
+  "email": "string",
+  "name": "string",
+  "semester": "string",
+  "role": "string",
+  "phone": "string | null",
+  "photo": "string | null"
+}
+```
 
-**Request:**
+## Users
 
-```http
-GET /api/leaderboard?semester=One
+### POST /api/users
+
+Create a new user account.
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "email": "string",
+  "password": "string",
+  "semester": "One | Two | Three | Four | Five | Six | Seven | Eight",
+  "phone": "string (optional)",
+  "photo": "string (optional)",
+  "fcmToken": "string (optional)"
+}
 ```
 
 **Response:**
+- **201 Created:** Returns created user data and JWT token.
+- **400 Bad Request:** If there are validation errors.
+- **500 Internal Server Error:** If there is an issue with the server.
 
+**Example Response:**
+```json
+{
+  "message": "success",
+  "token": "Bearer <token>",
+  "user": {
+    "id": "number",
+    "name": "string",
+    "email": "string",
+    "semester": "string",
+    "role": "STUDENT",
+    "score": 0,
+    "photo": "string | null"
+  }
+}
+```
+
+## Materials
+
+### GET /api/material
+
+Retrieve material information.
+
+**Query Parameters:**
+- `accepted`: "true" or "false" (optional)
+- `subject` or `semester`: Filter materials by subject or semester (optional)
+
+**Response:**
+- **200 OK:** Returns a list of materials.
+- **400 Bad Request:** If there are missing or invalid parameters.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
 ```json
 [
-    {
-        "id": 1,
-        "name": "q",
-        "score": 1,
-    },
-    {
-        "id": 2,
-        "name": "bomba",
-        "score": 4,
-    }
+  {
+    "id": "number",
+    "subject": "string",
+    "link": "string",
+    "type": "DOCUMENT | VIDEO | OTHER",
+    "authorId": "number",
+    "accepted": "boolean",
+    "semester": "string",
+    "title": "string",
+    "description": "string | null"
+  }
 ]
 ```
 
-#### Notes
+### POST /api/material
 
-- Ensure that the response data is sorted by points in descending order if required.
-- The `semester` field may be used to filter or sort the leaderboard based on the specific semester.
+Create a new material entry.
 
-## `/api/announcements`
+**Headers:**
+- Authorization: Bearer token
 
-### GET
-**Description:** Retrieve announcement information. You can either get a specific announcement by ID or all announcements.
-
-**Request Parameters:**
-- **id** (optional): ID of the announcement to retrieve.
-
-**Response:**
-- **200 OK:** Returns the announcement data.
-- **404 Not Found:** Announcement not found (if an ID is provided).
-- **500 Internal Server Error:** If there is an issue with the server.
-
-**Example Request:**
-```http
-GET /api/announcements?id=1
-```
-
-**Example Response:**
+**Request Body:**
 ```json
 {
-  "id": 1,
-  "title": "Assignment 1",
-  "content": "Details about Assignment 1.",
-  "due_date": "...",
-  "type": "Assignment",
-  "semester": "One"
+  "subject": "string",
+  "link": "string",
+  "type": "DOCUMENT | VIDEO | OTHER",
+  "semester": "One | Two | Three | Four | Five | Six | Seven | Eight",
+  "title": "string",
+  "description": "string (optional)"
 }
 ```
 
-### POST
-**Description:** Create a new announcement.
+**Response:**
+- **201 Created:** Returns the created material.
+- **400 Bad Request:** If there are validation errors.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+### GET /api/material/accept
+
+Update the accepted status of a material (Admin only).
+
+**Query Parameters:**
+- `id`: ID of the material to update.
+- `accepted`: "true" or "false"
+
+**Headers:**
+- Authorization: Bearer token
+
+**Response:**
+- **200 OK:** Returns the updated material.
+- **400 Bad Request:** If there are invalid parameters.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the user is not an admin.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+### GET /api/specificMaterial
+
+Retrieve a specific material by ID.
+
+**Query Parameters:**
+- `id`: ID of the material to retrieve.
+
+**Response:**
+- **200 OK:** Returns the material.
+- **400 Bad Request:** If the ID is missing.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+## Announcements
+
+### GET /api/announcements
+
+Retrieve announcement information.
+
+**Query Parameters:**
+- `id` (optional): ID of the announcement to retrieve.
+- `semester` (optional): Filter announcements by semester.
+
+**Response:**
+- **200 OK:** Returns announcement data.
+- **404 Not Found:** If the announcement is not found (when ID is provided).
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
+```json
+[
+  {
+    "id": "number",
+    "title": "string",
+    "content": "string",
+    "due_date": "string | null",
+    "type": "Assignment | Quiz | Other",
+    "semester": "string",
+    "image": "string | null"
+  }
+]
+```
+
+### POST /api/announcements
+
+Create a new announcement (Admin only).
+
+**Headers:**
+- Authorization: Bearer token
 
 **Request Body:**
-- **title**: Title of the announcement.
-- **content**: Content of the announcement.
-- **due_date** due date
-- **type**: Type of the announcement (  Assignment, Quiz, Other ).
-- **semester**: Semester of the announcement (must be one of the defined enum values).
+```json
+{
+  "title": "string",
+  "content": "string",
+  "due_date": "string (optional)",
+  "type": "Assignment | Quiz | Other",
+  "semester": "One | Two | Three | Four | Five | Six | Seven | Eight",
+  "image": "string (optional)"
+}
+```
 
 **Response:**
 - **201 Created:** Returns the created announcement.
-- **400 Bad Request:** Validation errors.
-- **401 Unauthorized:** If the request is unauthorized.
+- **400 Bad Request:** If there are validation errors.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the user is not an admin.
 - **500 Internal Server Error:** If there is an issue with the server.
 
-**Example Request:**
-```http
-POST /api/announcements
-Authorization: Bearer <token>
-Content-Type: application/json
+### PUT /api/announcements
 
-{
-  "title": "New Quiz",
-  "content": "Details about the new quiz.",
-  "due_date": "...",
-  "type": "Quiz",
-  "semester": "Two"
-}
-```
+Update an existing announcement (Admin only).
 
-**Example Response:**
-```json
-{
-  "id": 1,
-  "title": "New Quiz",
-  "content": "Details about the new quiz.",
-  "due_date": "due_date",
-  "type": "Quiz",
-  "semester": "Two"
-}
-```
+**Query Parameters:**
+- `id`: ID of the announcement to update.
 
-### PUT
-**Description:** Update an existing announcement.
-
-**Request Parameters:**
-- **id**: ID of the announcement to update.
+**Headers:**
+- Authorization: Bearer token
 
 **Request Body:**
-- **title** (optional): Title of the announcement.
-- **content** (optional): Content of the announcement.
-- **due_date** due_date
-- **type** (optional): Type of the announcement (must be one of the defined enum values).
-- **semester** (optional): Semester of the announcement (must be one of the defined enum values).
+Same as POST, all fields optional.
 
 **Response:**
 - **200 OK:** Returns the updated announcement.
-- **400 Bad Request:** Validation errors.
-- **401 Unauthorized:** If the request is unauthorized.
-- **404 Not Found:** Announcement not found.
+- **400 Bad Request:** If there are validation errors.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the user is not an admin.
+- **404 Not Found:** If the announcement is not found.
 - **500 Internal Server Error:** If there is an issue with the server.
 
-**Example Request:**
-```http
-PUT /api/announcements?id=1
-Authorization: Bearer <token>
-Content-Type: application/json
+### DELETE /api/announcements
 
-{
-  "title": "Updated Assignment",
-  "content": "Updated details about the assignment.",
-  "due_date": "due_date",
-  "type": "Assignment",
-  "semester": "Three"
-}
-```
+Delete an announcement (Admin only).
 
-**Example Response:**
-```json
-{
-  "id": 1,
-  "title": "Updated Assignment",
-  "content": "Updated details about the assignment.",
-  "due_date": "due_date",
-  "type": "Assignment",
-  "semester": "Three"
-}
-```
+**Query Parameters:**
+- `id`: ID of the announcement to delete.
 
-### DELETE
-**Description:** Delete an announcement by its ID.
-
-**Request Parameters:**
-- **id**: ID of the announcement to delete.
+**Headers:**
+- Authorization: Bearer token
 
 **Response:**
 - **200 OK:** Returns the deleted announcement details.
-- **400 Bad Request:** If the ID parameter is missing.
-- **401 Unauthorized:** If the request is unauthorized.
-- **403 Forbidden:** If the user does not have the required permissions.
+- **400 Bad Request:** If the ID is missing.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the user is not an admin.
 - **500 Internal Server Error:** If there is an issue with the server.
 
-**Example Request:**
-```http
-DELETE /api/announcements?id=1
-Authorization: Bearer <token>
-```
-***Example Response***
-```http
-{
-  "id": 1,
-  "title": "Sample Announcement",
-  "content": "Details about the announcement.",
-  "due_date": "2024-01-01T00:00:00.000Z",
-  "type": "...",
-  "semester": "..."
-}
-```
+## Leaderboard
 
-### Notes
-- **Authorization:** For POST and PUT requests, include an `Authorization` header with a Bearer token.
-- **Validation:** Ensure that the `type` and `semester` fields match the defined enum values.
-- **Error Handling:** Responses include specific error messages for validation issues, unauthorized access, and internal server errors.
+### GET /api/leaderboard
+
+Fetch the current leaderboard data.
+
+**Query Parameters:**
+- `semester`: Filter leaderboard by semester.
+
+**Response:**
+- **200 OK:** Returns leaderboard data.
+- **400 Bad Request:** If the semester is invalid.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
+```json
+[
+  {
+    "id": "number",
+    "name": "string",
+    "score": "number"
+  }
+]
+```

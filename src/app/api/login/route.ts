@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
         email: user.email,
         semester: user.semester,
         role: user.role,
+        photo: user.photo,
       },
     });
   } catch (error) {

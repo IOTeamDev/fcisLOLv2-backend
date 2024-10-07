@@ -10,6 +10,8 @@ interface Data {
   link: string;
   type: MaterialType;
   semester?: Semester;
+  title?: string;
+  description?: string;
 }
 
 const validSubjects = Object.values(Subjects);
@@ -21,16 +23,23 @@ export async function GET(request: NextRequest) {
   const semester = searchParams.get("semester");
   const accepted = searchParams.get("accepted");
 
-  if (!subject || !semester || !accepted) {
+  if (!accepted) {
     return NextResponse.json(
-      { error: "Subject or semester is required. accepted is required" },
+      { error: "accepted is required" },
+      { status: 400 }
+    );
+  }
+
+  if (!subject && !semester) {
+    return NextResponse.json(
+      { error: "(subject) OR (semester) is required" },
       { status: 400 }
     );
   }
 
   if (accepted !== "true" && accepted !== "false") {
     return NextResponse.json(
-      { error: "Accepted must be either true or false" },
+      { error: "accepted must be either true or false" },
       { status: 400 }
     );
   }
@@ -47,11 +56,16 @@ export async function GET(request: NextRequest) {
           accepted: accepted === "true",
         },
         select: {
+          id: true,
           link: true,
           type: true,
+          title: true,
+          subject: true,
+          description: true,
           author: {
             select: {
               name: true,
+              photo: true,
             },
           },
         },
@@ -77,9 +91,18 @@ export async function GET(request: NextRequest) {
           accepted: accepted === "true",
         },
         select: {
+          id: true,
           link: true,
           type: true,
+          title: true,
+          description: true,
           subject: true,
+          author: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
         },
       });
       return NextResponse.json(data);
@@ -95,7 +118,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body: Data = await request.json();
-    const { subject, link, type, semester } = body;
+    const { subject, link, type, semester, title, description } = body;
 
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -103,7 +126,7 @@ export async function POST(request: NextRequest) {
     }
 
     const token = authHeader.split(" ")[1];
-    const userDataFromToken = await verifyToken(token, { id: true });
+    const userDataFromToken = await verifyToken(token, { id: true, role: true });
     const authorId = Number(userDataFromToken.id);
 
     if (!authorId || authorId !== userDataFromToken.id) {
@@ -135,6 +158,8 @@ export async function POST(request: NextRequest) {
         link,
         type,
         semester,
+        title: title || "",
+        description: description || "",
         accepted: userDataFromToken.role === "ADMIN",
         author: {
           connect: {
