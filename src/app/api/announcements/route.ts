@@ -106,6 +106,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // check for other annuncements' due dates and delete them if they are past
+    const now = new Date();
+    await prisma.announcement.deleteMany({
+      where: {
+        due_date: { lte: now },
+      },
+    });
+    // due_dateexample: 2021-09-30T00:00:00.000Z
+    // this type is called ISO 8601
+
     return NextResponse.json(newAnnouncement, { status: 201 });
   } catch (error) {
     console.error("Error creating announcement:", error);
