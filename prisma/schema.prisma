@@ -119,7 +119,7 @@ model Announcement {
   id        Int      @id @default(autoincrement())
   title     String
   content   String
-  due_date  DateTime @default(now())
+  due_date  DateTime? @default(now())
   type      AnnouncementType
   semester  Semester
   image     String?
