@@ -227,7 +227,7 @@ Retrieve announcement information.
     "id": "number",
     "title": "string",
     "content": "string",
-    "due_date": "string | null",
+    "due_date": "DateTime | null",
     "type": "Assignment | Quiz | Other",
     "semester": "string",
     "image": "string | null"
@@ -247,7 +247,7 @@ Create a new announcement (Admin only).
 {
   "title": "string",
   "content": "string",
-  "due_date": "string (optional)",
+  "due_date": "2021-09-30T00:00:00.000Z", (optional)
   "type": "Assignment | Quiz | Other",
   "semester": "One | Two | Three | Four | Five | Six | Seven | Eight",
   "image": "string (optional)"
