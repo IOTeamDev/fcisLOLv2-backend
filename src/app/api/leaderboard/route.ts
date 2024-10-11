@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
       id: user.id,
       name: user.name,
       score: user.score,
+      role: user.role,
     }));
 
     return NextResponse.json(leaderboard);
