@@ -33,6 +33,9 @@ export async function GET(request: NextRequest) {
       orderBy: {
         score: "asc",
       },
+      where: {
+        semester: semester,
+      },
     });
 
     const leaderboard = leaderboardUsers.map((user) => ({
