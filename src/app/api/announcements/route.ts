@@ -13,9 +13,8 @@ function validateAnnouncementData(data: any) {
     return { valid: false, message: "Invalid or missing content" };
   }
 
-  if (!data.due_date && typeof data.due_date !== "string") {
-    if (data.due_date !== "")
-      return { valid: false, message: "due date should be a string" };
+  if (!data.due_date || typeof data.due_date !== "string") {
+    return { valid: false, message: "due date should be a string" };
   }
 
   if (!data.type || !Object.values(AnnouncementType).includes(data.type)) {
