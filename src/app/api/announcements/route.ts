@@ -9,13 +9,13 @@ function validateAnnouncementData(data: any) {
     return { valid: false, message: "Invalid or missing title" };
   }
 
-  if (!data.content || typeof data.content !== "string") {
-    return { valid: false, message: "Invalid or missing content" };
-  }
+  // if (!data.content || typeof data.content !== "string") {
+  //   return { valid: false, message: "Invalid or missing content" };
+  // }
 
-  if (!data.due_date || typeof data.due_date !== "string") {
-    return { valid: false, message: "due date should be a string" };
-  }
+  // if (!data.due_date || typeof data.due_date !== "string") {
+  //   return { valid: false, message: "due date should be a string" };
+  // }
 
   if (!data.type || !Object.values(AnnouncementType).includes(data.type)) {
     return { valid: false, message: "Invalid or missing type" };
@@ -98,8 +98,8 @@ export async function POST(request: NextRequest) {
     const newAnnouncement = await prisma.announcement.create({
       data: {
         title: data.title,
-        content: data.content,
-        due_date: data.due_date,
+        content: data.content || "",
+        due_date: data.due_date || null,
         type: data.type,
         semester: data.semester,
         image: data.image || null,
