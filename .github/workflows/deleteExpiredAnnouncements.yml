@@ -1,0 +1,15 @@
+name: Delete Expired Announcements
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # This runs every day at midnight UTC
+
+jobs:
+  triggerDeletion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Delete Expired Announcements Endpoint
+        env:
+          NETLIFY_API_ENDPOINT: https://fcislol.netlify.app/api/announcements/deleteExpired
+        run: |
+          curl -X GET "$NETLIFY_API_ENDPOINT"
