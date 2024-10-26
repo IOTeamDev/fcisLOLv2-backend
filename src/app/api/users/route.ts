@@ -138,11 +138,6 @@ export async function PUT(request: NextRequest) {
   try {
     const data = await request.json();
 
-    const { valid, message } = validateUserData(data);
-    if (!valid) {
-      return NextResponse.json({ error: message }, { status: 400 });
-    }
-
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -158,14 +153,7 @@ export async function PUT(request: NextRequest) {
     ) {
       const updatedUser = await prisma.user.update({
         where: { id: Number(id) },
-        data: {
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          semester: data.semester,
-          phone: data.phone || null,
-          photo: data.photo || null,
-        },
+        data: data,
       });
 
       const { password, ...filteredUser } = updatedUser;
