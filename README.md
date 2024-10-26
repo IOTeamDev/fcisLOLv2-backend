@@ -118,6 +118,90 @@ Create a new user account.
 }
 ```
 
+### GET /api/users
+
+Retrieve user information.
+
+**Query Parameters:**
+- `id` (optional): ID of the user to retrieve.
+- `haveMaterial` (optional): "true" or "false" to include user's materials.
+
+**Response:**
+- **200 OK:** Returns user data or list of users.
+- **404 Not Found:** If the user is not found (when ID is provided).
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response (single user):**
+```json
+{
+  "id": "number",
+  "name": "string",
+  "email": "string",
+  "semester": "string",
+  "role": "string",
+  "score": "number",
+  "photo": "string | null",
+  "material": [] // Only included if haveMaterial=true
+}
+```
+
+**Example Response (multiple users):**
+```json
+[
+  {
+    "id": "number",
+    "name": "string",
+    "email": "string",
+    "semester": "string",
+    "role": "string",
+    "score": "number",
+    "photo": "string | null",
+    "material": [] // Only included if haveMaterial=true
+  }
+]
+```
+
+### PUT /api/users
+
+Update an existing user account.
+
+**Query Parameters:**
+- `id`: ID of the user to update.
+
+**Headers:**
+- Authorization: Bearer token
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "email": "string",
+  "password": "string",
+  "semester": "One | Two | Three | Four | Five | Six | Seven | Eight",
+  "phone": "string (optional)",
+  "photo": "string (optional)"
+}
+```
+
+**Response:**
+- **200 OK:** Returns the updated user data.
+- **400 Bad Request:** If there are validation errors or missing ID.
+- **401 Unauthorized:** If the token is invalid or missing, or if the user is not authorized to update the account.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
+```json
+{
+  "id": "number",
+  "name": "string",
+  "email": "string",
+  "semester": "string",
+  "role": "string",
+  "score": "number",
+  "photo": "string | null"
+}
+```
+
 ## Materials
 
 ### GET /api/material
