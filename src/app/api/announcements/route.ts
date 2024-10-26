@@ -107,13 +107,13 @@ export async function POST(request: NextRequest) {
     });
 
     // check for other annuncements' due dates and delete them if they are past
-    const now = new Date();
-    await prisma.announcement.deleteMany({
-      where: {
-        due_date: { lte: now },
-      },
-    });
-    // due_dateexample: 2021-09-30T00:00:00.000Z
+    // const now = new Date();
+    // await prisma.announcement.deleteMany({
+    //   where: {
+    //     due_date: { lte: now },
+    //   },
+    // });
+    // // due_dateexample: 2021-09-30T00:00:00.000Z
     // this type is called ISO 8601
 
     return NextResponse.json(newAnnouncement, { status: 201 });
@@ -131,11 +131,6 @@ export async function PUT(request: NextRequest) {
 
   try {
     const data = await request.json();
-
-    const { valid, message } = validateAnnouncementData(data);
-    if (!valid) {
-      return NextResponse.json({ error: message }, { status: 400 });
-    }
 
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
