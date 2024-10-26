@@ -289,6 +289,33 @@ Retrieve a specific material by ID.
 - **400 Bad Request:** If the ID is missing.
 - **500 Internal Server Error:** If there is an issue with the server.
 
+### DELETE /api/material
+
+Delete a material entry.
+
+**Headers:**
+- Authorization: Bearer token
+
+**Request Body:**
+```json
+{
+  "id": "number"
+}
+```
+
+**Response:**
+- **200 OK:** Returns a success message.
+- **400 Bad Request:** If the material ID is missing.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
+```json
+{
+  "message": "Material deleted"
+}
+```
+
 ## Announcements
 
 ### GET /api/announcements
@@ -407,3 +434,4 @@ Fetch the current leaderboard data.
   }
 ]
 ```
+
