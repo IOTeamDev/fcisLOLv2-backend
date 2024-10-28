@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function POST() {
   try {
     const now = new Date();
     const deletedAnnouncements = await prisma.announcement.deleteMany({
@@ -15,9 +15,8 @@ export async function GET() {
     });
 
     return NextResponse.json({
-      now: now,
       message: "Expired announcements deleted successfully",
-      deletedCount: deletedAnnouncements,
+      deletedCount: deletedAnnouncements.count,
     });
   } catch (error) {
     console.error("Error deleting announcements:", error);
