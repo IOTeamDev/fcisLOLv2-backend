@@ -12,4 +12,4 @@ jobs:
         env:
           NETLIFY_API_ENDPOINT: https://fcislol.netlify.app/api/announcements/deleteExpired
         run: |
-          curl -X GET "$NETLIFY_API_ENDPOINT"
+          curl -X POST "$NETLIFY_API_ENDPOINT"
