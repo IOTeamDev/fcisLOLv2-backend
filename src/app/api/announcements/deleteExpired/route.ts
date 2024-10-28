@@ -15,8 +15,9 @@ export async function GET() {
     });
 
     return NextResponse.json({
+      now: now,
       message: "Expired announcements deleted successfully",
-      deletedCount: deletedAnnouncements.count,
+      deletedCount: deletedAnnouncements,
     });
   } catch (error) {
     console.error("Error deleting announcements:", error);
