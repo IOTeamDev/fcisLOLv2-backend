@@ -44,6 +44,19 @@ export async function GET(request: NextRequest) {
       data: { accepted: accepted === "true" },
     });
 
+    if (accepted === "true") {
+      await prisma.user.update({
+        where: {
+          id: updatedMaterial.authorId,
+        },
+        data: {
+          score: {
+            increment: 1,
+          },
+        },
+      });
+    }
+
     return NextResponse.json(updatedMaterial);
   } catch (error) {
     return NextResponse.json(

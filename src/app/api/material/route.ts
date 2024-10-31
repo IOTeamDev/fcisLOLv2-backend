@@ -169,17 +169,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    await prisma.user.update({
-      where: {
-        id: authorId,
-      },
-      data: {
-        score: {
-          increment: 1,
-        },
-      },
-    });
-
     return NextResponse.json(newData, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 500 });
