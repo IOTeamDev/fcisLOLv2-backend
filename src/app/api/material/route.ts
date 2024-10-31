@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, Subjects, MaterialType, Semester } from "@prisma/client";
 import { verifyToken } from "@/utils/verifyToken";
+import { use } from "react";
 
 const prisma = new PrismaClient();
 
@@ -126,7 +127,10 @@ export async function POST(request: NextRequest) {
     }
 
     const token = authHeader.split(" ")[1];
-    const userDataFromToken = await verifyToken(token, { id: true, role: true });
+    const userDataFromToken = await verifyToken(token, {
+      id: true,
+      role: true,
+    });
     const authorId = Number(userDataFromToken.id);
 
     if (!authorId || authorId !== userDataFromToken.id) {
@@ -168,6 +172,19 @@ export async function POST(request: NextRequest) {
         },
       },
     });
+
+    if (userDataFromToken.role === "ADMIN") {
+      await prisma.user.update({
+        where: {
+          id: authorId,
+        },
+        data: {
+          score: {
+            increment: 1,
+          },
+        },
+      });
+    }
 
     return NextResponse.json(newData, { status: 201 });
   } catch (error) {
