@@ -190,7 +190,7 @@ export async function PATCH(request: NextRequest) {
       const updatedUser = await prisma.user.update({
         where: { id: Number(id) },
         data: {
-          lastActive: new Date()
+          lastActive: new Date().toString(),
         },
       });
 
