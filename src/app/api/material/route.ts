@@ -65,6 +65,7 @@ export async function GET(request: NextRequest) {
           description: true,
           author: {
             select: {
+              id: true,
               name: true,
               photo: true,
             },

@@ -169,3 +169,41 @@ export async function PUT(request: NextRequest) {
     );
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  const id = request.nextUrl.searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+  }
+
+  try {
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const userDataFromToken = await verifyToken(token, { id: true });
+
+    if (userDataFromToken.id === Number(id)) {
+      const updatedUser = await prisma.user.update({
+        where: { id: Number(id) },
+        data: {
+          lastActive: new Date()
+        },
+      });
+
+      const { password, ...filteredUser } = updatedUser;
+      return NextResponse.json(filteredUser);
+    } else {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  } catch (error) {
+    console.error("Error updating lastActive:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}

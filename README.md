@@ -1,5 +1,5 @@
 # FCIS LOL API Documentation
-
+ 
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Authentication](#authentication)
@@ -97,9 +97,9 @@ Create a new user account.
 ```
 
 **Response:**
-- **201 Created:** Returns created user data and JWT token.
+- **200 OK:** Returns created user data and JWT token.
 - **400 Bad Request:** If there are validation errors.
-- **500 Internal Server Error:** If there is an issue with the server.
+- **500 Internal Server Error:** If there is an issue with the server or if a user already exists with the provided email.
 
 **Example Response:**
 ```json
@@ -120,7 +120,7 @@ Create a new user account.
 
 ### GET /api/users
 
-Retrieve user information.
+Retrieve user information. Note: Password is always excluded from responses.
 
 **Query Parameters:**
 - `id` (optional): ID of the user to retrieve.
@@ -163,7 +163,7 @@ Retrieve user information.
 
 ### PUT /api/users
 
-Update an existing user account.
+Update an existing user account. Note: Only admins can update any user's data, while regular users can only update their own account.
 
 **Query Parameters:**
 - `id`: ID of the user to update.
@@ -171,15 +171,15 @@ Update an existing user account.
 **Headers:**
 - Authorization: Bearer token
 
-**Request Body:**
+**Request Body (all fields optional):**
 ```json
 {
   "name": "string",
   "email": "string",
   "password": "string",
   "semester": "One | Two | Three | Four | Five | Six | Seven | Eight",
-  "phone": "string (optional)",
-  "photo": "string (optional)"
+  "phone": "string",
+  "photo": "string"
 }
 ```
 
@@ -202,6 +202,36 @@ Update an existing user account.
 }
 ```
 
+### PATCH /api/users
+
+Update a user's last active timestamp. Note: Users can only update their own last active status.
+
+**Query Parameters:**
+- `id`: User ID (required)
+
+**Headers:**
+- Authorization: Bearer token (required)
+
+**Response:**
+- **200 OK:** Returns updated user data
+- **400 Bad Request:** If user ID is missing
+- **401 Unauthorized:** If token is invalid or user tries to update another user's status
+- **500 Internal Server Error:** If there is an issue with the server
+
+**Example Response:**
+```json
+{
+  "id": "number",
+  "email": "string",
+  "name": "string",
+  "semester": "string",
+  "role": "string",
+  "lastActive": "string (ISO date)",
+  "phone": "string | null",
+  "photo": "string | null"
+}
+```
+
 ## Materials
 
 ### GET /api/material
@@ -209,12 +239,14 @@ Update an existing user account.
 Retrieve material information.
 
 **Query Parameters:**
-- `accepted`: "true" or "false" (optional)
-- `subject` or `semester`: Filter materials by subject or semester (optional)
+- `accepted`: "true" or "false" (required)
+- Either `subject` OR `semester` is required (cannot use both):
+  - `subject`: Filter materials by subject
+  - `semester`: Filter materials by semester
 
 **Response:**
 - **200 OK:** Returns a list of materials.
-- **400 Bad Request:** If there are missing or invalid parameters.
+- **400 Bad Request:** If required parameters are missing or invalid.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Response:**
@@ -225,18 +257,20 @@ Retrieve material information.
     "subject": "string",
     "link": "string",
     "type": "DOCUMENT | VIDEO | OTHER",
-    "authorId": "number",
-    "accepted": "boolean",
-    "semester": "string",
     "title": "string",
-    "description": "string | null"
+    "description": "string | null",
+    "author": {
+      "id": "number",
+      "name": "string",
+      "photo": "string | null"
+    }
   }
 ]
 ```
 
 ### POST /api/material
 
-Create a new material entry.
+Create a new material entry. Note: Materials posted by admins are automatically accepted and the admin receives a score point.
 
 **Headers:**
 - Authorization: Bearer token
@@ -259,9 +293,9 @@ Create a new material entry.
 - **401 Unauthorized:** If the token is invalid or missing.
 - **500 Internal Server Error:** If there is an issue with the server.
 
-### GET /api/material/accept
+### PUT /api/material/accept
 
-Update the accepted status of a material (Admin only).
+Update the accepted status of a material (Admin only). Note: When a material is accepted, the author receives a score point.
 
 **Query Parameters:**
 - `id`: ID of the material to update.
@@ -410,6 +444,14 @@ Delete an announcement (Admin only).
 - **403 Forbidden:** If the user is not an admin.
 - **500 Internal Server Error:** If there is an issue with the server.
 
+### GET /api/announcements/deleteExpired
+
+Delete expired announcements automatically (system endpoint).
+
+**Response:**
+- **200 OK:** Returns the number of deleted announcements
+- **500 Internal Server Error:** If there is an issue with the server
+
 ## Leaderboard
 
 ### GET /api/leaderboard
@@ -434,4 +476,3 @@ Fetch the current leaderboard data.
   }
 ]
 ```
-

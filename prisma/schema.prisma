@@ -19,6 +19,7 @@ model User {
   role      Role
   score     Int     
   fcmToken  String?
+  lastActive DateTime @default(now())
 }
 
 enum Role {
