@@ -1,6 +1,7 @@
 # FCIS LOL API Documentation
- 
+
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Authentication](#authentication)
 3. [Users](#users)
@@ -25,6 +26,7 @@ Authorization: Bearer <token>
 Authenticate a user and obtain a JWT token.
 
 **Request Body:**
+
 ```json
 {
   "email": "string",
@@ -33,11 +35,13 @@ Authenticate a user and obtain a JWT token.
 ```
 
 **Response:**
+
 - **200 OK:** Returns a JWT token and user data.
 - **400 Bad Request:** If email or password is missing or invalid.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Response:**
+
 ```json
 {
   "message": "success",
@@ -57,14 +61,17 @@ Authenticate a user and obtain a JWT token.
 Retrieve the currently authenticated user's data.
 
 **Headers:**
+
 - Authorization: Bearer token
 
 **Response:**
+
 - **200 OK:** Returns user data.
 - **401 Unauthorized:** If the token is invalid or missing.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Response:**
+
 ```json
 {
   "id": "number",
@@ -82,16 +89,21 @@ Retrieve the currently authenticated user's data.
 Updates the authenticated user's profile information.
 
 **Headers:**
+
 - `Authorization`: Bearer token required for authentication
 
 **Request Body:**
+
 ```json
 {
-  "name": "New Name",         // optional
-  "email": "new@email.com",   // optional
-  "phone": "1234567890",      // optional
-  "photo": "photo_url",       // optional
-  "semester": "One"         // optional
+  "name": "New Name",           // optional
+  "email": "new@email.com",     // optional
+  "phone": "1234567890",        // optional
+  "photo": "photo_url",         // optional
+  "semester": "One",            // optional
+  "oldPassword": "old",         // optional
+  "newPassword": "new",         // optional
+  "newPasswordConfirm": "new"   // optional
 }
 ```
 
@@ -102,6 +114,7 @@ Updates the authenticated user's profile information.
 Create a new user account.
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -115,11 +128,13 @@ Create a new user account.
 ```
 
 **Response:**
+
 - **200 OK:** Returns created user data and JWT token.
 - **400 Bad Request:** If there are validation errors.
 - **500 Internal Server Error:** If there is an issue with the server or if a user already exists with the provided email.
 
 **Example Response:**
+
 ```json
 {
   "message": "success",
@@ -141,15 +156,18 @@ Create a new user account.
 Retrieve user information. Note: Password is always excluded from responses.
 
 **Query Parameters:**
+
 - `id` (optional): ID of the user to retrieve.
 - `haveMaterial` (optional): "true" or "false" to include user's materials.
 
 **Response:**
+
 - **200 OK:** Returns user data or list of users.
 - **404 Not Found:** If the user is not found (when ID is provided).
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Response (single user):**
+
 ```json
 {
   "id": "number",
@@ -164,6 +182,7 @@ Retrieve user information. Note: Password is always excluded from responses.
 ```
 
 **Example Response (multiple users):**
+
 ```json
 [
   {
@@ -184,12 +203,15 @@ Retrieve user information. Note: Password is always excluded from responses.
 Update an existing user account. Note: Only admins can update any user's data, while regular users can only update their own account.
 
 **Query Parameters:**
+
 - `id`: ID of the user to update.
 
 **Headers:**
+
 - Authorization: Bearer token
 
 **Request Body (all fields optional):**
+
 ```json
 {
   "name": "string",
@@ -202,12 +224,14 @@ Update an existing user account. Note: Only admins can update any user's data, w
 ```
 
 **Response:**
+
 - **200 OK:** Returns the updated user data.
 - **400 Bad Request:** If there are validation errors or missing ID.
 - **401 Unauthorized:** If the token is invalid or missing, or if the user is not authorized to update the account.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Response:**
+
 ```json
 {
   "id": "number",
@@ -225,18 +249,22 @@ Update an existing user account. Note: Only admins can update any user's data, w
 Update a user's last active timestamp. Note: Users can only update their own last active status.
 
 **Query Parameters:**
+
 - `id`: User ID (required)
 
 **Headers:**
+
 - Authorization: Bearer token (required)
 
 **Response:**
+
 - **200 OK:** Returns updated user data
 - **400 Bad Request:** If user ID is missing
 - **401 Unauthorized:** If token is invalid or user tries to update another user's status
 - **500 Internal Server Error:** If there is an issue with the server
 
 **Example Response:**
+
 ```json
 {
   "id": "number",
@@ -257,17 +285,20 @@ Update a user's last active timestamp. Note: Users can only update their own las
 Retrieve material information.
 
 **Query Parameters:**
+
 - `accepted`: "true" or "false" (required)
 - Either `subject` OR `semester` is required (cannot use both):
   - `subject`: Filter materials by subject
   - `semester`: Filter materials by semester
 
 **Response:**
+
 - **200 OK:** Returns a list of materials.
 - **400 Bad Request:** If required parameters are missing or invalid.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Response:**
+
 ```json
 [
   {
@@ -291,9 +322,11 @@ Retrieve material information.
 Create a new material entry. Note: Materials posted by admins are automatically accepted and the admin receives a score point.
 
 **Headers:**
+
 - Authorization: Bearer token
 
 **Request Body:**
+
 ```json
 {
   "subject": "string",
@@ -306,6 +339,7 @@ Create a new material entry. Note: Materials posted by admins are automatically 
 ```
 
 **Response:**
+
 - **201 Created:** Returns the created material.
 - **400 Bad Request:** If there are validation errors.
 - **401 Unauthorized:** If the token is invalid or missing.
@@ -316,24 +350,28 @@ Create a new material entry. Note: Materials posted by admins are automatically 
 Updates an existing material resource. Only users with the ADMIN role can perform this operation.
 
 **Headers:**
+
 - `Authorization`: Bearer token required for authentication and authorization.
 
 **Request Body:**
+
 ```json
 {
-  "id": 1,                    // required, the unique identifier of the material to update
-  "subject": "SUBJECT_NAME",    // optional
+  "id": 1, // required, the unique identifier of the material to update
+  "subject": "SUBJECT_NAME", // optional
   "link": "https://example.com/resource", // optional
-  "type": "MATERIAL_TYPE",      // optional
+  "type": "MATERIAL_TYPE", // optional
   "semester": "SEMESTER_VALUE", // optional
-  "title": "Resource Title",    // optional
+  "title": "Resource Title", // optional
   "description": "Detailed description of the material" // optional
 }
 ```
 
 **Response:**
+
 - **200 OK:**
-**Example Response**
+  **Example Response**
+
 ```json
 {
   "success": true,
@@ -354,13 +392,16 @@ Updates an existing material resource. Only users with the ADMIN role can perfor
 Update the accepted status of a material (Admin only). Note: When a material is accepted, the author receives a score point.
 
 **Query Parameters:**
+
 - `id`: ID of the material to update.
 - `accepted`: "true" or "false"
 
 **Headers:**
+
 - Authorization: Bearer token
 
 **Response:**
+
 - **200 OK:** Returns the updated material.
 - **400 Bad Request:** If there are invalid parameters.
 - **401 Unauthorized:** If the token is invalid or missing.
@@ -372,9 +413,11 @@ Update the accepted status of a material (Admin only). Note: When a material is 
 Retrieve a specific material by ID.
 
 **Query Parameters:**
+
 - `id`: ID of the material to retrieve.
 
 **Response:**
+
 - **200 OK:** Returns the material.
 - **400 Bad Request:** If the ID is missing.
 - **500 Internal Server Error:** If there is an issue with the server.
@@ -384,9 +427,11 @@ Retrieve a specific material by ID.
 Delete a material entry.
 
 **Headers:**
+
 - Authorization: Bearer token
 
 **Request Body:**
+
 ```json
 {
   "id": "number"
@@ -394,12 +439,14 @@ Delete a material entry.
 ```
 
 **Response:**
+
 - **200 OK:** Returns a success message.
 - **400 Bad Request:** If the material ID is missing.
 - **401 Unauthorized:** If the token is invalid or missing.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Response:**
+
 ```json
 {
   "message": "Material deleted"
@@ -413,15 +460,18 @@ Delete a material entry.
 Retrieve announcement information.
 
 **Query Parameters:**
+
 - `id` (optional): ID of the announcement to retrieve.
 - `semester` (optional): Filter announcements by semester.
 
 **Response:**
+
 - **200 OK:** Returns announcement data.
 - **404 Not Found:** If the announcement is not found (when ID is provided).
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Response:**
+
 ```json
 [
   {
@@ -441,9 +491,11 @@ Retrieve announcement information.
 Create a new announcement (Admin only).
 
 **Headers:**
+
 - Authorization: Bearer token
 
 **Request Body:**
+
 ```json
 {
   "title": "string",
@@ -456,6 +508,7 @@ Create a new announcement (Admin only).
 ```
 
 **Response:**
+
 - **201 Created:** Returns the created announcement.
 - **400 Bad Request:** If there are validation errors.
 - **401 Unauthorized:** If the token is invalid or missing.
@@ -467,15 +520,18 @@ Create a new announcement (Admin only).
 Update an existing announcement (Admin only).
 
 **Query Parameters:**
+
 - `id`: ID of the announcement to update.
 
 **Headers:**
+
 - Authorization: Bearer token
 
 **Request Body:**
 Same as POST, all fields optional.
 
 **Response:**
+
 - **200 OK:** Returns the updated announcement.
 - **400 Bad Request:** If there are validation errors.
 - **401 Unauthorized:** If the token is invalid or missing.
@@ -488,12 +544,15 @@ Same as POST, all fields optional.
 Delete an announcement (Admin only).
 
 **Query Parameters:**
+
 - `id`: ID of the announcement to delete.
 
 **Headers:**
+
 - Authorization: Bearer token
 
 **Response:**
+
 - **200 OK:** Returns the deleted announcement details.
 - **400 Bad Request:** If the ID is missing.
 - **401 Unauthorized:** If the token is invalid or missing.
@@ -505,6 +564,7 @@ Delete an announcement (Admin only).
 Delete expired announcements automatically (system endpoint).
 
 **Response:**
+
 - **200 OK:** Returns the number of deleted announcements
 - **500 Internal Server Error:** If there is an issue with the server
 
@@ -515,14 +575,17 @@ Delete expired announcements automatically (system endpoint).
 Fetch the current leaderboard data.
 
 **Query Parameters:**
+
 - `semester`: Filter leaderboard by semester.
 
 **Response:**
+
 - **200 OK:** Returns leaderboard data.
 - **400 Bad Request:** If the semester is invalid.
 - **500 Internal Server Error:** If there is an issue with the server.
 
 **Example Response:**
+
 ```json
 [
   {
