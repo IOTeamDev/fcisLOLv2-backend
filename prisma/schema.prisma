@@ -129,5 +129,9 @@ model Announcement {
 enum AnnouncementType {
   Assignment
   Quiz
+  Practical 
+  Final
+  Workshop
+  Summer_Training 
   Other
 }

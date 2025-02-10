@@ -373,7 +373,7 @@ Retrieve announcement information.
     "title": "string",
     "content": "string",
     "due_date": "DateTime | null",
-    "type": "Assignment | Quiz | Other",
+    "type": "Assignment | Quiz | Practical | Final | Workshop | Summer_Training | Other",
     "semester": "string",
     "image": "string | null"
   }
