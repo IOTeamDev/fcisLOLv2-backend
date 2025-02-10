@@ -77,6 +77,24 @@ Retrieve the currently authenticated user's data.
 }
 ```
 
+### PATCH /api/me/edit
+
+Updates the authenticated user's profile information.
+
+**Headers:**
+- `Authorization`: Bearer token required for authentication
+
+**Request Body:**
+```json
+{
+  "name": "New Name",         // optional
+  "email": "new@email.com",   // optional
+  "phone": "1234567890",      // optional
+  "photo": "photo_url",       // optional
+  "semester": "One"         // optional
+}
+```
+
 ## Users
 
 ### POST /api/users
