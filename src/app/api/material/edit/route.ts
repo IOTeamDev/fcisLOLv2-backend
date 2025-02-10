@@ -18,14 +18,30 @@ export async function PATCH(request: NextRequest) {
   // Check for Authorization header
   const authHeader = request.headers.get("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return NextResponse.json({ error: "Unauthorized: Missing token" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized: Missing token" },
+      { status: 401 }
+    );
   }
 
+  let userDataFromToken;
   const token = authHeader.split(" ")[1];
   try {
-    await verifyToken(token);
+    userDataFromToken = await verifyToken(token, {
+      role: true,
+    });
   } catch (err) {
-    return NextResponse.json({ error: "Unauthorized: Invalid token" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized: Invalid token" },
+      { status: 401 }
+    );
+  }
+
+  if (userDataFromToken.role !== "ADMIN") {
+    return NextResponse.json(
+      { error: "Unauthorized: Admin role required" },
+      { status: 403 }
+    );
   }
 
   // Parse request body
@@ -48,7 +64,8 @@ export async function PATCH(request: NextRequest) {
   if (data.type !== undefined) updatePayload.type = data.type;
   if (data.semester !== undefined) updatePayload.semester = data.semester;
   if (data.title !== undefined) updatePayload.title = data.title;
-  if (data.description !== undefined) updatePayload.description = data.description;
+  if (data.description !== undefined)
+    updatePayload.description = data.description;
 
   try {
     const updatedMaterial = await prisma.material.update({
@@ -57,6 +74,12 @@ export async function PATCH(request: NextRequest) {
     });
     return NextResponse.json({ success: true, material: updatedMaterial });
   } catch (err) {
-    return NextResponse.json({ error: "Update failed", details: err instanceof Error ? err.message : err }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Update failed",
+        details: err instanceof Error ? err.message : err,
+      },
+      { status: 500 }
+    );
   }
 }

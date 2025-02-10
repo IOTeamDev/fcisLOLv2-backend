@@ -293,6 +293,44 @@ Create a new material entry. Note: Materials posted by admins are automatically 
 - **401 Unauthorized:** If the token is invalid or missing.
 - **500 Internal Server Error:** If there is an issue with the server.
 
+### PATCH /api/material/edit
+
+Updates an existing material resource. Only users with the ADMIN role can perform this operation.
+
+**Headers:**
+- `Authorization`: Bearer token required for authentication and authorization.
+
+**Request Body:**
+```json
+{
+  "id": 1,                    // required, the unique identifier of the material to update
+  "subject": "SUBJECT_NAME",    // optional
+  "link": "https://example.com/resource", // optional
+  "type": "MATERIAL_TYPE",      // optional
+  "semester": "SEMESTER_VALUE", // optional
+  "title": "Resource Title",    // optional
+  "description": "Detailed description of the material" // optional
+}
+```
+
+**Response:**
+- **200 OK:**
+**Example Response**
+```json
+{
+  "success": true,
+  "material": {
+    "id": 1,
+    "subject": "SUBJECT_NAME",
+    "link": "https://example.com/resource",
+    "type": "MATERIAL_TYPE",
+    "semester": "SEMESTER_VALUE",
+    "title": "Resource Title",
+    "description": "Detailed description of the material"
+  }
+}
+```
+
 ### PUT /api/material/accept
 
 Update the accepted status of a material (Admin only). Note: When a material is accepted, the author receives a score point.
