@@ -479,7 +479,7 @@ Retrieve announcement information.
     "title": "string",
     "content": "string",
     "due_date": "DateTime | null",
-    "type": "Assignment | Quiz | Practical | Final | Workshop | Summer_Training | Other",
+    "type": "Assignment | Quiz | Practical | Final | Workshop | Summer_Training | Faculty | Other",
     "semester": "string",
     "image": "string | null"
   }

@@ -133,5 +133,6 @@ enum AnnouncementType {
   Final
   Workshop
   Summer_Training 
+  Faculty
   Other
 }
