@@ -25,6 +25,7 @@ model User {
 enum Role {
   STUDENT
   ADMIN
+  DEV
 }
 
 enum Semester {

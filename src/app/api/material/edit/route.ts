@@ -37,9 +37,9 @@ export async function PATCH(request: NextRequest) {
     );
   }
 
-  if (userDataFromToken.role !== "ADMIN") {
+  if (["ADMIN", "DEV"].includes(userDataFromToken.role)) {
     return NextResponse.json(
-      { error: "Unauthorized: Admin role required" },
+      { error: "Unauthorized: Admin or Dev role required" },
       { status: 403 }
     );
   }
