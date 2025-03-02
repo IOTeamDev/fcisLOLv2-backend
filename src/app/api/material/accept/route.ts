@@ -32,7 +32,10 @@ export async function GET(request: NextRequest) {
     const token = authHeader.split(" ")[1];
     const userDataFromToken = await verifyToken(token, { role: true });
 
-    if (["ADMIN", "DEV"].includes(userDataFromToken.role)) {
+    if (
+      userDataFromToken.role !== "ADMIN" &&
+      userDataFromToken.role !== "DEV"
+    ) {
       return NextResponse.json(
         { error: "Forbidden: Admin or Dev role required" },
         { status: 403 }
