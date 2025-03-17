@@ -207,3 +207,75 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  // Get the ID of the user to delete
+  const userId = request.nextUrl.searchParams.get("id");
+
+  if (!userId) {
+    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+  }
+
+  // Authenticate the requester
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    // Verify token and get requester's data
+    const userDataFromToken = await verifyToken(token, {
+      id: true,
+      role: true,
+    });
+
+    const userIdToDelete = Number(userId);
+
+    // Check if requester has permission (is account owner or has DEV role)
+    if (
+      userDataFromToken.id !== userIdToDelete &&
+      userDataFromToken.role !== "DEV"
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Unauthorized: Only account owner or DEV role can delete accounts",
+        },
+        { status: 403 }
+      );
+    }
+
+    // Start a transaction to ensure all operations succeed or fail together
+    const deletedUser = await prisma.$transaction(async (tx) => {
+      // Transfer user's materials to account ID 0
+      await tx.material.updateMany({
+        where: { authorId: userIdToDelete },
+        data: { authorId: 0 },
+      });
+
+      // Delete the user
+      return tx.user.delete({
+        where: { id: userIdToDelete },
+      });
+    });
+
+    // Return the deleted user info (without password)
+    const { password, ...userData } = deletedUser;
+
+    return NextResponse.json({
+      message: "User deleted successfully",
+      user: userData,
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to delete user",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}

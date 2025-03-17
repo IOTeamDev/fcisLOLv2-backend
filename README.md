@@ -278,6 +278,44 @@ Update a user's last active timestamp. Note: Users can only update their own las
 }
 ```
 
+### DELETE /api/users
+
+Delete a user account. This operation can only be performed by users with DEV role or by the account owner themselves. When a user is deleted, all their materials are transferred to a system account (ID 0).
+
+**Query Parameters:**
+
+- `id`: ID of the user to delete.
+
+**Headers:**
+
+- Authorization: Bearer token
+
+**Response:**
+
+- **200 OK:** Returns the deleted user's data and confirmation message.
+- **400 Bad Request:** If the user ID is missing.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the requester doesn't have permission to delete the account (not owner or DEV).
+- **403 Forbidden:** If attempting to delete the system account (ID 0).
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
+
+```json
+{
+  "message": "User deleted successfully",
+  "user": {
+    "id": "number",
+    "name": "string",
+    "email": "string",
+    "semester": "string",
+    "role": "string",
+    "score": "number",
+    "photo": "string | null"
+  }
+}
+```
+
 ## Materials
 
 ### GET /api/material
