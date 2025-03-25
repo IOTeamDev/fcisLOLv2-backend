@@ -10,6 +10,7 @@ interface EditExamData {
   link?: string;
   Type?: PreviousExamsType;
   Semester?: Semester;
+  title?: string; // Add title field
 }
 
 export async function PATCH(request: NextRequest) {
@@ -61,6 +62,7 @@ export async function PATCH(request: NextRequest) {
   if (data.link !== undefined) updatePayload.link = data.link;
   if (data.Type !== undefined) updatePayload.Type = data.Type;
   if (data.Semester !== undefined) updatePayload.Semester = data.Semester;
+  if (data.title !== undefined) updatePayload.title = data.title;
 
   try {
     const updatedExam = await prisma.previousExams.update({

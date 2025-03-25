@@ -118,9 +118,10 @@ enum Subjects {
 
 model PreviousExams {
   id        Int      @id @default(autoincrement())
-  Semester  Semester
-  Subject   Subjects
-  Type      PreviousExamsType
+  title     String
+  semester  Semester
+  subject   Subjects
+  type      PreviousExamsType
   accepted  Boolean
   link      String
 }

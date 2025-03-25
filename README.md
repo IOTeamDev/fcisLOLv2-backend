@@ -632,9 +632,10 @@ Retrieve previous exam information.
 [
   {
     "id": "number",
+    "title": "string",
     "link": "string",
-    "Type": "Mid | Final | Other",
-    "Subject": "string"
+    "type": "Mid | Final | Other",
+    "subject": "string"
   }
 ]
 ```
@@ -651,10 +652,11 @@ Create a new previous exam entry. Note: Exams posted by admins are automatically
 
 ```json
 {
-  "Subject": "string",
-  "link": "string",
-  "Type": "Mid | Final | Other",
-  "Semester": "One | Two | Three | Four | Five | Six | Seven | Eight"
+  "subject": "string", // required
+  "link": "string", // required
+  "type": "Mid | Final | Other", // required
+  "semester": "One | Two | Three | Four | Five | Six | Seven | Eight", // required
+  "title": "string" // required
 }
 ```
 
@@ -727,7 +729,8 @@ Updates an existing previous exam. Only users with ADMIN or DEV roles can perfor
   "Subject": "SUBJECT_NAME", // optional
   "link": "https://example.com/resource", // optional
   "Type": "Mid | Final | Other", // optional
-  "Semester": "SEMESTER_VALUE" // optional
+  "Semester": "SEMESTER_VALUE", // optional
+  "title": "Exam Title" // optional
 }
 ```
 
@@ -741,10 +744,11 @@ Updates an existing previous exam. Only users with ADMIN or DEV roles can perfor
   "success": true,
   "exam": {
     "id": 1,
-    "Subject": "SUBJECT_NAME",
+    "subject": "SUBJECT_NAME",
     "link": "https://example.com/resource",
-    "Type": "Mid | Final | Other",
-    "Semester": "SEMESTER_VALUE",
+    "type": "Mid | Final | Other",
+    "semester": "SEMESTER_VALUE",
+    "title": "Exam Title",
     "accepted": true
   }
 }

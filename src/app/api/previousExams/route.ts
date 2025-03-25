@@ -6,10 +6,11 @@ const prisma = new PrismaClient();
 
 interface Data {
   id?: number;
-  Subject: Subjects;
+  subject: Subjects;
   link: string;
-  Type: PreviousExamsType;
-  Semester?: Semester;
+  type: PreviousExamsType;
+  semester: Semester; // removed optional marker
+  title: string; // added required title field
 }
 
 const validSubjects = Object.values(Subjects);
@@ -50,14 +51,14 @@ export async function GET(request: NextRequest) {
     try {
       const data = await prisma.previousExams.findMany({
         where: {
-          Subject: subject as Subjects,
+          subject: subject as Subjects,
           accepted: accepted === "true",
         },
         select: {
           id: true,
           link: true,
-          Type: true,
-          Subject: true,
+          type: true,
+          subject: true,
         },
       });
       return NextResponse.json(data);
@@ -77,14 +78,14 @@ export async function GET(request: NextRequest) {
     try {
       const data = await prisma.previousExams.findMany({
         where: {
-          Semester: semester as Semester,
+          semester: semester as Semester,
           accepted: accepted === "true",
         },
         select: {
           id: true,
           link: true,
-          Type: true,
-          Subject: true,
+          type: true,
+          subject: true,
         },
       });
       return NextResponse.json(data);
@@ -100,7 +101,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body: Data = await request.json();
-    const { Subject, link, Type, Semester } = body;
+    const { subject, link, type, semester, title } = body;
 
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -117,11 +118,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
     }
 
-    if (!validSubjects.includes(Subject)) {
+    if (!validSubjects.includes(subject)) {
       return NextResponse.json({ error: "Invalid subject" }, { status: 400 });
     }
 
-    if (!validTypes.includes(Type)) {
+    if (!validTypes.includes(type)) {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
 
@@ -129,19 +130,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Link is required" }, { status: 400 });
     }
 
-    if (
-      (Semester && !Object.values(Semester).includes(Semester)) ||
-      !Semester
-    ) {
-      return NextResponse.json({ error: "Invalid semester" }, { status: 400 });
+    if (!title) {
+      return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    }
+
+    if (!semester || !Object.values(Semester).includes(semester)) {
+      return NextResponse.json({ error: "Valid semester is required" }, { status: 400 });
     }
 
     const newData = await prisma.previousExams.create({
       data: {
-        Subject,
+        subject,
         link,
-        Type,
-        Semester,
+        type,
+        semester,
+        title,
         accepted: userDataFromToken.role === "ADMIN",
       },
     });
