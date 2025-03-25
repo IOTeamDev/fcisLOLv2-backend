@@ -116,6 +116,20 @@ enum Subjects {
     Embedded_Systems
 }
 
+model PreviousExams {
+  id        Int      @id @default(autoincrement())
+  Semester  Semester
+  Subject   Subjects
+  Type      PreviousExamsType
+  accepted  Boolean
+  link      String
+}
+
+enum PreviousExamsType {
+  Mid
+  Final
+  Other
+}
 
 model Announcement {
   id        Int      @id @default(autoincrement())
@@ -126,6 +140,7 @@ model Announcement {
   semester  Semester
   image     String?
 }
+
 
 enum AnnouncementType {
   Assignment
