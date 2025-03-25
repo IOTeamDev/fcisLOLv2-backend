@@ -7,7 +7,8 @@
 3. [Users](#users)
 4. [Materials](#materials)
 5. [Announcements](#announcements)
-6. [Leaderboard](#leaderboard)
+6. [Previous Exams](#previous-exams)
+7. [Leaderboard](#leaderboard)
 
 ## Introduction
 
@@ -605,6 +606,170 @@ Delete expired announcements automatically (system endpoint).
 
 - **200 OK:** Returns the number of deleted announcements
 - **500 Internal Server Error:** If there is an issue with the server
+
+## Previous Exams
+
+### GET /api/previousExams
+
+Retrieve previous exam information.
+
+**Query Parameters:**
+
+- `accepted`: "true" or "false" (required)
+- Either `subject` OR `semester` is required (cannot use both):
+  - `subject`: Filter exams by subject
+  - `semester`: Filter exams by semester
+
+**Response:**
+
+- **200 OK:** Returns a list of previous exams.
+- **400 Bad Request:** If required parameters are missing or invalid.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
+
+```json
+[
+  {
+    "id": "number",
+    "link": "string",
+    "Type": "Mid | Final | Other",
+    "Subject": "string"
+  }
+]
+```
+
+### POST /api/previousExams
+
+Create a new previous exam entry. Note: Exams posted by admins are automatically accepted and the admin receives a score point.
+
+**Headers:**
+
+- Authorization: Bearer token
+
+**Request Body:**
+
+```json
+{
+  "Subject": "string",
+  "link": "string",
+  "Type": "Mid | Final | Other",
+  "Semester": "One | Two | Three | Four | Five | Six | Seven | Eight"
+}
+```
+
+**Response:**
+
+- **201 Created:** Returns the created exam.
+- **400 Bad Request:** If there are validation errors.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+### DELETE /api/previousExams
+
+Delete a previous exam entry. Only users with ADMIN or DEV roles can perform this operation.
+
+**Headers:**
+
+- Authorization: Bearer token
+
+**Request Body:**
+
+```json
+{
+  "id": "number"
+}
+```
+
+**Response:**
+
+- **200 OK:** Returns a success message.
+- **400 Bad Request:** If the exam ID is missing.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the user doesn't have ADMIN or DEV role.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
+
+```json
+{
+  "message": "Exam deleted"
+}
+```
+
+### GET /api/previousExams/specificExam
+
+Retrieve a specific previous exam by ID.
+
+**Query Parameters:**
+
+- `id`: ID of the exam to retrieve.
+
+**Response:**
+
+- **200 OK:** Returns the exam.
+- **400 Bad Request:** If the ID is missing.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+### PATCH /api/previousExams/edit
+
+Updates an existing previous exam. Only users with ADMIN or DEV roles can perform this operation.
+
+**Headers:**
+
+- `Authorization`: Bearer token required for authentication and authorization.
+
+**Request Body:**
+
+```json
+{
+  "id": 1, // required, the unique identifier of the exam to update
+  "Subject": "SUBJECT_NAME", // optional
+  "link": "https://example.com/resource", // optional
+  "Type": "Mid | Final | Other", // optional
+  "Semester": "SEMESTER_VALUE" // optional
+}
+```
+
+**Response:**
+
+- **200 OK:**
+  **Example Response**
+
+```json
+{
+  "success": true,
+  "exam": {
+    "id": 1,
+    "Subject": "SUBJECT_NAME",
+    "link": "https://example.com/resource",
+    "Type": "Mid | Final | Other",
+    "Semester": "SEMESTER_VALUE",
+    "accepted": true
+  }
+}
+```
+
+### GET /api/previousExams/accept
+
+Update the accepted status of a previous exam. Only users with ADMIN or DEV roles can perform this operation.
+
+**Query Parameters:**
+
+- `id`: ID of the exam to update.
+- `accepted`: "true" or "false"
+
+**Headers:**
+
+- Authorization: Bearer token
+
+**Response:**
+
+- **200 OK:** Returns the updated exam.
+- **400 Bad Request:** If there are invalid parameters.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the user doesn't have ADMIN or DEV role.
+- **500 Internal Server Error:** If there is an issue with the server.
 
 ## Leaderboard
 
