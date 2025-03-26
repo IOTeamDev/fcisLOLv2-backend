@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
         },
         select: {
           id: true,
+          title: true,
           link: true,
           type: true,
           subject: true,
@@ -83,6 +84,7 @@ export async function GET(request: NextRequest) {
         },
         select: {
           id: true,
+          title: true,
           link: true,
           type: true,
           subject: true,
@@ -145,11 +147,11 @@ export async function POST(request: NextRequest) {
         type,
         semester,
         title,
-        accepted: userDataFromToken.role === "ADMIN",
+        accepted: userDataFromToken.role === "ADMIN" || userDataFromToken.role === "DEV",
       },
     });
 
-    if (userDataFromToken.role === "ADMIN") {
+    if (userDataFromToken.role === "ADMIN" || userDataFromToken.role === "DEV") {
       await prisma.user.update({
         where: {
           id: userDataFromToken.id,

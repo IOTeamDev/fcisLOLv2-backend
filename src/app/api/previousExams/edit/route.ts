@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 
 interface EditExamData {
   id: number;
-  Subject?: Subjects;
+  subject?: Subjects;
   link?: string;
-  Type?: PreviousExamsType;
-  Semester?: Semester;
+  type?: PreviousExamsType;
+  semester?: Semester;
   title?: string; // Add title field
 }
 
@@ -58,10 +58,10 @@ export async function PATCH(request: NextRequest) {
 
   // Prepare update payload by filtering out undefined values
   const updatePayload: Partial<EditExamData> = {};
-  if (data.Subject !== undefined) updatePayload.Subject = data.Subject;
+  if (data.subject !== undefined) updatePayload.subject = data.subject;
   if (data.link !== undefined) updatePayload.link = data.link;
-  if (data.Type !== undefined) updatePayload.Type = data.Type;
-  if (data.Semester !== undefined) updatePayload.Semester = data.Semester;
+  if (data.type !== undefined) updatePayload.type = data.type;
+  if (data.semester !== undefined) updatePayload.semester = data.semester;
   if (data.title !== undefined) updatePayload.title = data.title;
 
   try {
