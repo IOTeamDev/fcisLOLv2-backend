@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     const token = authHeader.split(" ")[1];
     const userDataFromToken = await verifyToken(token, { role: true });
 
-    if (userDataFromToken.role !== "ADMIN") {
+    if (userDataFromToken.role !== "ADMIN" && userDataFromToken.role !== "DEV") {
       return NextResponse.json(
         { error: "Unauthorized: User does not have the required permissions" },
         { status: 403 }
@@ -143,7 +143,7 @@ export async function PUT(request: NextRequest) {
     const token = authHeader.split(" ")[1];
     const userDataFromToken = await verifyToken(token, { role: true });
 
-    if (userDataFromToken.role !== "ADMIN") {
+    if (userDataFromToken.role !== "ADMIN" && userDataFromToken.role !== "DEV") {
       return NextResponse.json(
         { error: "Unauthorized: User does not have the required permissions" },
         { status: 403 }
@@ -192,7 +192,7 @@ export async function DELETE(request: NextRequest) {
     const token = authHeader.split(" ")[1];
     const userDataFromToken = await verifyToken(token, { role: true });
 
-    if (userDataFromToken.role !== "ADMIN") {
+    if (userDataFromToken.role !== "ADMIN" && userDataFromToken.role !== "DEV") {
       return NextResponse.json(
         { error: "Unauthorized: User does not have the required permissions" },
         { status: 403 }
