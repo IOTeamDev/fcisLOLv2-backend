@@ -20,7 +20,7 @@ model User {
   score     Int     
   fcmToken  String?
   lastActive String?
-  isVerified Boolean
+  isVerified Boolean @default(false)
 }
 
 enum Role {

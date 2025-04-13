@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
       phone: true,
       photo: true,
       score: true,
+      isVerified: true
     }, true);
 
     // Return the user data
