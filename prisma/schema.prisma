@@ -20,6 +20,7 @@ model User {
   score     Int     
   fcmToken  String?
   lastActive String?
+  isVerified Boolean
 }
 
 enum Role {
@@ -151,5 +152,6 @@ enum AnnouncementType {
   Workshop
   Summer_Training 
   Faculty
+  Mid
   Other
 }

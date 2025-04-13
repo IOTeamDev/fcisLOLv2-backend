@@ -148,7 +148,6 @@ export async function PUT(request: NextRequest) {
     const userDataFromToken = await verifyToken(token, { id: true });
 
     if (
-      userDataFromToken.role === "ADMIN" ||
       userDataFromToken.role === "DEV"
     ) {
       const updatedUser = await prisma.user.update({
