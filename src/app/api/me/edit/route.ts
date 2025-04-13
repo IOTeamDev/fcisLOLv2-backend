@@ -13,6 +13,7 @@ interface EditUserData {
   oldPassword?: string;
   newPassword?: string;
   newPasswordConfirm?: string;
+  isVerified?: boolean;
 }
 
 interface UpdatePayload {
@@ -22,6 +23,7 @@ interface UpdatePayload {
   photo?: string;
   semester?: string;
   password?: string;
+  isVerified?: boolean;
 }
 
 export async function PATCH(request: NextRequest) {
@@ -62,6 +64,7 @@ export async function PATCH(request: NextRequest) {
   if (data.name) updatePayload.name = data.name;
   if (data.phone) updatePayload.phone = data.phone;
   if (data.photo) updatePayload.photo = data.photo;
+  if (data.isVerified) updatePayload.isVerified = data.isVerified;
 
   if (data.email) {
     const existingUser = await prisma.user.findUnique({
