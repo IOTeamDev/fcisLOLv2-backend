@@ -9,6 +9,7 @@
 5. [Announcements](#announcements)
 6. [Previous Exams](#previous-exams)
 7. [Leaderboard](#leaderboard)
+8. [Useful Links](#useful-links)
 
 ## Introduction
 
@@ -802,3 +803,114 @@ Fetch the current leaderboard data.
   }
 ]
 ```
+
+## Useful Links
+
+### GET /api/usefulLinks
+
+Retrieve useful links information.
+
+**Query Parameters:**
+
+- `id` (optional): ID of the specific useful link to retrieve.
+- `semester` (optional): Filter links by semester.
+- `subject` (optional): Filter links by subject.
+- `isGeneral` (optional): "true" or "false" to filter by general status.
+
+**Response:**
+
+- **200 OK:** Returns useful link data or list of useful links.
+- **404 Not Found:** If the useful link is not found (when ID is provided).
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
+
+```json
+[
+  {
+    "id": "number",
+    "link": "string",
+    "subject": "string",
+    "semester": "string",
+    "isGeneral": "boolean"
+  }
+]
+```
+
+### POST /api/usefulLinks
+
+Create a new useful link (DEV role only).
+
+**Headers:**
+
+- Authorization: Bearer token
+
+**Request Body:**
+
+```json
+{
+  "link": "string",
+  "subject": "string",
+  "semester": "One | Two | Three | Four | Five | Six | Seven | Eight",
+  "isGeneral": "boolean (optional, defaults to false)"
+}
+```
+
+**Response:**
+
+- **201 Created:** Returns the created useful link.
+- **400 Bad Request:** If there are validation errors.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the user does not have DEV role.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+### PUT /api/usefulLinks
+
+Update an existing useful link (DEV role only).
+
+**Query Parameters:**
+
+- `id`: ID of the useful link to update.
+
+**Headers:**
+
+- Authorization: Bearer token
+
+**Request Body:**
+
+```json
+{
+  "link": "string",
+  "subject": "string",
+  "semester": "One | Two | Three | Four | Five | Six | Seven | Eight",
+  "isGeneral": "boolean"
+}
+```
+
+**Response:**
+
+- **200 OK:** Returns the updated useful link.
+- **400 Bad Request:** If there are validation errors or missing ID.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the user does not have DEV role.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+### DELETE /api/usefulLinks
+
+Delete a useful link (DEV role only).
+
+**Query Parameters:**
+
+- `id`: ID of the useful link to delete.
+
+**Headers:**
+
+- Authorization: Bearer token
+
+**Response:**
+
+- **200 OK:** Returns the deleted useful link details.
+- **400 Bad Request:** If the ID is missing.
+- **401 Unauthorized:** If the token is invalid or missing.
+- **403 Forbidden:** If the user does not have DEV role.
+- **500 Internal Server Error:** If there is an issue with the server.
