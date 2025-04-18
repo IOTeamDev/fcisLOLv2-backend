@@ -318,6 +318,29 @@ Delete a user account. This operation can only be performed by users with DEV ro
 }
 ```
 
+### GET /api/users/id
+
+Retrieve a user's ID by their email address.
+
+**Query Parameters:**
+
+- `email`: Email address of the user (required).
+
+**Response:**
+
+- **200 OK:** Returns the user's ID.
+- **400 Bad Request:** If the email parameter is missing.
+- **404 Not Found:** If no user with the provided email exists.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response:**
+
+```json
+{
+  "id": "number"
+}
+```
+
 ## Materials
 
 ### GET /api/material
