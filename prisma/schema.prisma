@@ -155,3 +155,11 @@ enum AnnouncementType {
   Mid
   Other
 }
+
+model UsefulLink {
+  id        Int      @id @default(autoincrement())
+  link      String
+  subject   Subjects
+  semester  Semester
+  isGeneral Boolean  @default(false)
+}
