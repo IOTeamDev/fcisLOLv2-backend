@@ -130,6 +130,7 @@ export async function PATCH(request: NextRequest) {
           semester: updatePayload.semester as Semester,
         }),
         ...(updatePayload.password && { password: updatePayload.password }),
+        ...(updatePayload.isVerified && { isVerified: updatePayload.isVerified }),
       },
     });
 
