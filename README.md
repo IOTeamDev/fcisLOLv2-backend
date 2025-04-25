@@ -10,6 +10,7 @@
 6. [Previous Exams](#previous-exams)
 7. [Leaderboard](#leaderboard)
 8. [Useful Links](#useful-links)
+9. [Verification](#verification)
 
 ## Introduction
 
@@ -950,3 +951,36 @@ Delete a useful link (DEV role only).
   "isGeneral": "boolean"
 }
 ```
+
+## Verification
+
+### POST /api/sendVerificationCode
+
+Send a verification code (OTP) to a user's email.
+
+**Request Body:**
+
+```json
+{
+  "recipientEmail": "string",
+  "recipientName": "string (optional)"
+}
+```
+
+**Response:**
+
+- **200 OK:** Returns success message and the OTP (in development mode).
+- **400 Bad Request:** If recipientEmail is missing.
+- **500 Internal Server Error:** If there is an issue with sending the email or the server.
+
+**Example Response:**
+
+```json
+{
+  "success": true,
+  "message": "Verification code sent successfully",
+  "otp": 123456
+}
+```
+
+**Note:** In production, the OTP should not be returned in the response, but stored securely on the server and verified separately.
