@@ -954,9 +954,9 @@ Delete a useful link (DEV role only).
 
 ## Verification
 
-### POST /api/sendVerificationCode
+### POST /api/verificationCode/send
 
-Send a verification code (OTP) to a user's email.
+Send a verification code (OTP) to a user's email. The code is stored in the database and expires after 15 minutes.
 
 **Request Body:**
 
@@ -969,7 +969,7 @@ Send a verification code (OTP) to a user's email.
 
 **Response:**
 
-- **200 OK:** Returns success message and the OTP (in development mode).
+- **200 OK:** Returns success message.
 - **400 Bad Request:** If recipientEmail is missing.
 - **500 Internal Server Error:** If there is an issue with sending the email or the server.
 
@@ -978,9 +978,43 @@ Send a verification code (OTP) to a user's email.
 ```json
 {
   "success": true,
-  "message": "Verification code sent successfully",
-  "otp": 123456
+  "message": "Verification code sent successfully"
 }
 ```
 
-**Note:** In production, the OTP should not be returned in the response, but stored securely on the server and verified separately.
+### POST /api/verificationCode/check
+
+Verify an OTP code sent to a user's email. If verification is successful and the user exists in the database, their account will be marked as verified.
+
+**Request Body:**
+
+```json
+{
+  "email": "string",
+  "otp": "string"
+}
+```
+
+**Response:**
+
+- **200 OK:** Returns success message if verification is successful.
+- **400 Bad Request:** If email or OTP is missing, invalid, expired, or not found.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response (Success):**
+
+```json
+{
+  "success": true,
+  "message": "Verification successful"
+}
+```
+
+**Example Response (Error):**
+
+```json
+{
+  "success": false,
+  "message": "Invalid verification code"
+}
+```

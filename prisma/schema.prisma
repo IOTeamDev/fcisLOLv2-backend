@@ -163,3 +163,11 @@ model UsefulLink {
   semester  Semester
   isGeneral Boolean  @default(false)
 }
+
+model VerificationCode {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  otp       String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}

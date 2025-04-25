@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 
+const prisma = new PrismaClient();
+
 // Generate random 6-digit code
-function generateOTP(): number {
-  return 100000 + Math.floor(Math.random() * 900000);
+function generateOTP(): string {
+  return (100000 + Math.floor(Math.random() * 900000)).toString();
 }
 
 export async function POST(request: NextRequest) {
@@ -22,6 +25,24 @@ export async function POST(request: NextRequest) {
 
     // Generate OTP
     const otp = generateOTP();
+    
+    // Set expiry time (15 minutes from now)
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 15);
+
+    // Store OTP in database (upsert to handle existing email records)
+    await prisma.verificationCode.upsert({
+      where: { email: recipientEmail },
+      update: {
+        otp,
+        expiresAt,
+      },
+      create: {
+        email: recipientEmail,
+        otp,
+        expiresAt,
+      },
+    });
 
     // Log OTP for development purposes
     console.log(`OTP for ${recipientEmail}: ${otp}`);
@@ -70,8 +91,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    // Store OTP in a secure way (session, database, etc.)
-    // For now, just return it (in production, this should be handled more securely)
     return NextResponse.json({
       success: true,
       message: "Verification code sent successfully",
@@ -86,4 +105,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+} 
