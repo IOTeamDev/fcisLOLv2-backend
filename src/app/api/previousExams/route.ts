@@ -60,6 +60,7 @@ export async function GET(request: NextRequest) {
           link: true,
           type: true,
           subject: true,
+          createdAt: true,
         },
       });
       return NextResponse.json(data);
@@ -148,6 +149,7 @@ export async function POST(request: NextRequest) {
         semester,
         title,
         accepted: userDataFromToken.role === "ADMIN" || userDataFromToken.role === "DEV",
+        createdAt: new Date(),
       },
     });
 
@@ -206,7 +208,7 @@ export async function DELETE(request: NextRequest) {
       
       return NextResponse.json({ message: "Exam deleted" });
     } else {
-      return NextResponse.json({ error: "Unauthorized: Admin role required" }, { status: 403 });
+      return NextResponse.json({ error: "Unauthorized: Admin or Dev role required" }, { status: 403 });
     }
   } catch (error) {
     return NextResponse.json(

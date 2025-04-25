@@ -125,6 +125,7 @@ model PreviousExams {
   type      PreviousExamsType
   accepted  Boolean
   link      String
+  createdAt DateTime @default(now())
 }
 
 enum PreviousExamsType {

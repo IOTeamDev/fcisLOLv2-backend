@@ -44,7 +44,10 @@ export async function GET(request: NextRequest) {
 
     const updatedExam = await prisma.previousExams.update({
       where: { id: Number(id) },
-      data: { accepted: accepted === "true" },
+      data: {
+        accepted: accepted === "true",
+        createdAt: new Date(),
+      },
     });
 
     return NextResponse.json(updatedExam);

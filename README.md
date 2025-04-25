@@ -637,7 +637,8 @@ Retrieve previous exam information.
     "title": "string",
     "link": "string",
     "type": "Mid | Final | Other",
-    "subject": "string"
+    "subject": "string",
+    "createdAt": "date"
   }
 ]
 ```
