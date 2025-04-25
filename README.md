@@ -1018,3 +1018,48 @@ Verify an OTP code sent to a user's email. If verification is successful and the
   "message": "Invalid verification code"
 }
 ```
+
+### POST /api/resetPassword
+
+Reset a user's password using a verification code (OTP) previously sent to their email.
+
+**Request Body:**
+
+```json
+{
+  "email": "string",
+  "otp": "string",
+  "newPassword": "string"
+}
+```
+
+**Response:**
+
+- **200 OK:** Returns success message if the password was reset successfully.
+- **400 Bad Request:** If email, OTP, or new password is missing or invalid.
+- **404 Not Found:** If no user with the given email exists.
+- **500 Internal Server Error:** If there is an issue with the server.
+
+**Example Response (Success):**
+
+```json
+{
+  "success": true,
+  "message": "Password reset successful"
+}
+```
+
+**Example Response (Error):**
+
+```json
+{
+  "success": false,
+  "message": "Invalid verification code"
+}
+```
+
+**Notes:**
+- The password reset process requires first requesting a verification code via the `/api/verificationCode/send` endpoint.
+- The OTP must be valid and not expired.
+- The new password must be at least 6 characters long.
+- After a successful password reset, the verification code is deleted and cannot be reused.
