@@ -69,9 +69,22 @@ export async function POST(request: NextRequest) {
       </body>
     </html>`;
 
+    // Check for required environment variables
+    const apiKey = process.env.EMAIL_API_KEY;
+    const apiEndpoint = process.env.EMAIL_API_ENDPOINT || "https://api.brevo.com/v3/smtp/email";
+    const emailSender = process.env.EMAIL_SENDER || "notesu362@9091167.brevosend.com";
+
+    if (!apiKey) {
+      console.error("Missing EMAIL_API_KEY environment variable");
+      return NextResponse.json(
+        { error: "Email service configuration is incomplete" },
+        { status: 500 }
+      );
+    }
+
     // Prepare payload for the email API
     const emailPayload = {
-      "sender": {"name": "UniNotes", "email": process.env.EMAIL_SENDER || "notesu362@9091167.brevosend.com"},
+      "sender": {"name": "UniNotes", "email": emailSender},
       "to": [
         {"email": recipientEmail, "name": recipientName || "User"}
       ],
@@ -81,21 +94,32 @@ export async function POST(request: NextRequest) {
 
     // Send email using the API (e.g., Brevo, SendGrid, etc.)
     const response = await axios.post(
-      process.env.EMAIL_API_ENDPOINT || "https://api.brevo.com/v3/smtp/email",
+      apiEndpoint,
       emailPayload,
       {
         headers: {
           "Content-Type": "application/json",
-          "api-key": process.env.EMAIL_API_KEY || ""
-        }
+          "api-key": apiKey
+        },
+        timeout: 10000 // Adding timeout like in the Telegram implementation
       }
     );
+
+    console.log("Email API response:", response.status, response.statusText);
 
     return NextResponse.json({
       success: true,
       message: "Verification code sent successfully",
     });
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Email API error:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+    }
+    
     console.error("Error sending verification code:", error);
     return NextResponse.json(
       { 
