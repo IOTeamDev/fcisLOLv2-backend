@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     // Check for required environment variables
     const apiKey = process.env.EMAIL_API_KEY;
     const apiEndpoint = process.env.EMAIL_API_ENDPOINT || "https://api.brevo.com/v3/smtp/email";
-    const emailSender = process.env.EMAIL_SENDER || "notesu362@9091167.brevosend.com";
+    const emailSender = process.env.EMAIL_SENDER || "notesu362@gmail.com";
 
     if (!apiKey) {
       console.error("Missing EMAIL_API_KEY environment variable");
