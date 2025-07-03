@@ -30,20 +30,6 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date();
     expiresAt.setMinutes(expiresAt.getMinutes() + 15);
 
-    // Store OTP in database (upsert to handle existing email records)
-    await prisma.verificationCode.upsert({
-      where: { email: recipientEmail },
-      update: {
-        otp,
-        expiresAt,
-      },
-      create: {
-        email: recipientEmail,
-        otp,
-        expiresAt,
-      },
-    });
-
     // Log OTP for development purposes
     console.log(`OTP for ${recipientEmail}: ${otp}`);
 
@@ -82,30 +68,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Prepare payload for the email API
-    const emailPayload = {
-      "sender": {"name": "UniNotes", "email": emailSender},
-      "to": [
-        {"email": recipientEmail, "name": recipientName || "User"}
-      ],
-      "subject": "Verifying UniNotes Account",
-      "htmlContent": htmlContent
-    };
+    // Prepare promises for concurrent execution
+    const dbPromise = prisma.verificationCode.upsert({
+      where: { email: recipientEmail },
+      update: { otp, expiresAt },
+      create: { email: recipientEmail, otp, expiresAt },
+    });
 
-    // Send email using the API (e.g., Brevo, SendGrid, etc.)
-    const response = await axios.post(
+    const emailPromise = axios.post(
       apiEndpoint,
-      emailPayload,
+      {
+        "sender": {"name": "UniNotes", "email": emailSender},
+        "to": [{"email": recipientEmail, "name": recipientName || "User"}],
+        "subject": "Verifying UniNotes Account",
+        "htmlContent": htmlContent
+      },
       {
         headers: {
           "Content-Type": "application/json",
           "api-key": apiKey
         },
-        timeout: 10000 // Adding timeout like in the Telegram implementation
+        timeout: 10000
       }
     );
 
-    console.log("Email API response:", response.status, response.statusText);
+    // Execute both promises concurrently
+    const [dbResult, emailApiResponse] = await Promise.all([dbPromise, emailPromise]);
+
+    console.log("Email API response:", emailApiResponse.status, emailApiResponse.statusText);
 
     return NextResponse.json({
       success: true,
@@ -129,4 +119,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}
